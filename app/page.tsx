@@ -56,7 +56,7 @@ export default function Home() {
               />
               <div className="monitor-screen monitor-portfolio">
                 <div className="monitor-perspective-content">
-                  <p className="monitor-kicker">Eunchae Won · Artist / Developer</p>
+                  <p className="monitor-kicker">Eunchae Won</p>
                   <MonitorGlitchTitle />
                   <p className="monitor-intro">
                     I am a solo game developer and digital artist working with Unreal
