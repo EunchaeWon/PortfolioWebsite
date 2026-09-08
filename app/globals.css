@@ -345,6 +345,7 @@ button, summary { color: inherit; font: inherit; }
   justify-content: center;
   gap: clamp(0.15rem, 0.3vw, 0.3rem);
   margin-top: clamp(0.22rem, 0.45vw, 0.44rem);
+  margin-bottom: 5px;
 }
 .monitor-button {
   display: inline-flex;
