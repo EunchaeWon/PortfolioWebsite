@@ -373,14 +373,14 @@ button, summary { color: inherit; font: inherit; }
   width: max-content;
   white-space: nowrap;
 }
-.monitor-button-cursor {
-  display: inline-block;
-  width: 0.58ch;
-  margin-left: 0.16em;
-  animation: monitor-button-cursor-blink 820ms steps(1, end) infinite;
-}
 .monitor-button:hover, .monitor-button:focus-visible { background: #81fff0; color: #020817; }
-.monitor-button-primary { background: var(--acid); color: #020817; }
+.monitor-button-primary {
+  background: var(--acid);
+  color: #020817;
+  animation: monitor-button-blink 1.35s steps(1, end) infinite;
+}
+.monitor-button-primary:hover,
+.monitor-button-primary:focus-visible { animation-play-state: paused; }
 .monitor-screen::after {
   position: absolute;
   inset: 0;
@@ -1198,9 +1198,9 @@ footer {
   94% { transform: translateX(1px); }
   95% { transform: translate(0); }
 }
-@keyframes monitor-button-cursor-blink {
-  0%, 46% { opacity: 1; }
-  47%, 100% { opacity: 0; }
+@keyframes monitor-button-blink {
+  0%, 44%, 58%, 100% { background: var(--acid); border-color: #81fff0; box-shadow: 0 0 9px rgba(57, 255, 222, 0.38); opacity: 1; }
+  45%, 57% { background: #0c665f; border-color: rgba(129, 255, 240, 0.58); box-shadow: none; opacity: 0.62; }
 }
 @keyframes sprinkle-float {
   0%, 100% { translate: 0 0; }
