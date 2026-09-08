@@ -295,7 +295,7 @@ button, summary { color: inherit; font: inherit; }
 }
 .monitor-perspective-content {
   position: absolute;
-  inset: -5%;
+  inset: 0 -5% -4%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -373,19 +373,6 @@ button, summary { color: inherit; font: inherit; }
 }
 .monitor-button:hover, .monitor-button:focus-visible { background: #81fff0; color: #020817; }
 .monitor-button-primary { background: var(--acid); color: #020817; }
-.monitor-footnote {
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.24rem;
-  margin-top: clamp(0.18rem, 0.36vw, 0.34rem);
-  justify-content: center;
-  font-size: clamp(0.6rem, 1.08vw, 1.04rem);
-  font-weight: 400;
-  letter-spacing: 0.035em;
-  text-transform: uppercase;
-}
-.monitor-status-dot { width: 5px; height: 5px; flex: 0 0 auto; border-radius: 50%; background: var(--coral); box-shadow: 0 0 6px var(--coral); }
 .monitor-screen::after {
   position: absolute;
   inset: 0;
@@ -1288,7 +1275,6 @@ footer {
   .monitor-title { font-size: 1.05rem; }
   .monitor-intro { font-size: 0.21rem; }
   .monitor-button { min-height: 18px; font-size: 0.38rem; }
-  .monitor-footnote { font-size: 0.32rem; }
   .cat-status { right: 0.5rem; bottom: -2rem; max-width: 190px; }
   .sprinkle-a { right: 3%; }
   .sprinkle-b { left: 5%; }

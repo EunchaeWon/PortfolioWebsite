@@ -56,7 +56,7 @@ export default function Home() {
               />
               <div className="monitor-screen monitor-portfolio">
                 <div className="monitor-perspective-content">
-                  <p className="monitor-kicker">Eunchae Won</p>
+                  <p className="monitor-kicker">Digital Artist</p>
                   <MonitorGlitchTitle />
                   <p className="monitor-intro">
                     I am a solo game developer and digital artist working with Unreal
@@ -69,10 +69,6 @@ export default function Home() {
                     <a className="monitor-button" href={links.github} target="_blank" rel="noreferrer">
                       <span className="monitor-button-label">GitHub&nbsp;↗</span>
                     </a>
-                  </div>
-                  <div className="monitor-footnote">
-                    <span className="monitor-status-dot" aria-hidden="true" />
-                    Independent practice · South Korea / Germany
                   </div>
                   <span className="monitor-glare" aria-hidden="true" />
                 </div>
