@@ -834,7 +834,7 @@ footer {
 .world-loading { display: block; padding: 0.5rem 0.7rem; border: 1px solid var(--acid); background: #07152d; color: var(--acid); font-family: "Courier New", monospace; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; }
 .world-scanlines { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(57, 255, 222, 0.055) 4px 5px); }
 .world-project-overlay { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: clamp(1rem, 4vw, 3rem); background: rgba(1, 6, 20, 0.72); backdrop-filter: blur(5px); }
-.cassette-project-overlay { position: fixed; z-index: 80; }
+.cassette-project-overlay { position: fixed; z-index: 2147483000; isolation: isolate; }
 .world-project-window { width: min(100%, 1180px); max-height: calc(100svh - 3rem); overflow: hidden; border: 3px solid #dffcff; border-radius: 10px; background: #08152d; box-shadow: 0 0 0 3px #2cebd8, 11px 11px 0 #7f39d8, 0 0 42px rgba(57, 255, 222, 0.68); animation: world-window-glitch-in 420ms steps(2, end) both; }
 .world-project-titlebar { display: flex; align-items: center; justify-content: space-between; min-height: 2.2rem; padding: 0.35rem 0.55rem 0.35rem 0.85rem; border-bottom: 2px solid #dffcff; background: linear-gradient(90deg, #13386b, #62238b); color: #ecfeff; font-family: "VT323", "Lucida Console", monospace; font-size: clamp(1rem, 2vw, 1.35rem); letter-spacing: 0.06em; }
 .world-project-titlebar button { display: grid; width: 1.65rem; height: 1.65rem; place-items: center; border: 1px solid #dffcff; background: #08152d; color: #dffcff; font: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
