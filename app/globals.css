@@ -897,6 +897,8 @@ footer {
   will-change: transform;
   isolation: isolate;
   z-index: 1;
+  pointer-events: auto;
+  cursor: pointer;
 }
 .floating-character.is-roaming { opacity: 0.72; }
 .floating-character img,
@@ -991,8 +993,10 @@ footer {
   opacity: 0;
   line-height: 0;
   filter: drop-shadow(3px 3px 0 rgba(36, 29, 24, 0.36));
-  transition: opacity 720ms ease;
-  will-change: opacity;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 720ms ease, transform var(--character-click-duration, 0s) cubic-bezier(.2,.72,.24,1);
+  will-change: opacity, transform;
 }
 .ambient-neon-tabby.is-visible { opacity: 0.78; }
 .ambient-neon-tabby img { display: block; width: 100%; height: auto; user-select: none; }

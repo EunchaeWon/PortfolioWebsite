@@ -28,6 +28,7 @@ type AmbientSpot = {
   width: number;
   flip: 1 | -1;
   visible: boolean;
+  duration: number;
 };
 
 const characters = [
@@ -218,6 +219,64 @@ function createMotion(
   };
 }
 
+function createEdgeMotion(
+  displayWidth: number,
+  displayHeight: number,
+  baseFacing: 1 | -1,
+  orientation: "horizontal" | "vertical" | "upright",
+  previous: Motion | null,
+): Motion {
+  const margin = 10;
+  const headerY = Math.min(70, Math.max(18, window.innerHeight * 0.045));
+  const maxX = Math.max(margin, window.innerWidth - displayWidth - margin);
+  const maxY = Math.max(headerY, window.innerHeight - displayHeight - margin);
+  const currentX = previous?.x ?? window.innerWidth / 2 - displayWidth / 2;
+  const currentY = previous?.y ?? window.innerHeight / 2 - displayHeight / 2;
+  const clamp = (value: number, minimum: number, maximum: number) =>
+    Math.max(minimum, Math.min(maximum, value));
+  const edgeOffset = () => (Math.random() - 0.5) * Math.min(260, window.innerHeight * 0.32);
+  const destinations = [
+    { x: margin, y: clamp(currentY + edgeOffset(), headerY, maxY) },
+    { x: maxX, y: clamp(currentY + edgeOffset(), headerY, maxY) },
+    { x: clamp(currentX + edgeOffset(), margin, maxX), y: headerY },
+  ];
+  const destination = destinations[Math.floor(Math.random() * destinations.length)];
+  const deltaX = destination.x - currentX;
+  const deltaY = destination.y - currentY;
+  const facing: 1 | -1 = deltaX >= 0 ? 1 : -1;
+  const travelAngle = Math.atan2(deltaY, Math.max(Math.abs(deltaX), 1)) * (180 / Math.PI);
+  let rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 45;
+
+  if (orientation === "vertical" && previous) {
+    while (rotation - previous.rotation > 180) rotation -= 360;
+    while (rotation - previous.rotation < -180) rotation += 360;
+  }
+
+  const finalRotation =
+    orientation === "vertical"
+      ? rotation
+      : orientation === "upright"
+        ? Math.max(-3, Math.min(3, travelAngle * 0.08))
+        : facing * Math.max(-70, Math.min(70, travelAngle));
+  const flip = orientation === "vertical" || facing === baseFacing ? 1 : -1;
+  const heading =
+    orientation === "vertical"
+      ? finalRotation - 45
+      : facing === 1
+        ? finalRotation
+        : 180 - finalRotation;
+
+  return {
+    x: destination.x,
+    y: destination.y,
+    rotation: finalRotation,
+    duration: 1 + Math.random(),
+    flip,
+    heading,
+    turnId: (previous?.turnId ?? 0) + 1,
+  };
+}
+
 export function FloatingCharacters() {
   const [motions, setMotions] = useState<Array<Motion | null>>(
     characters.map(() => null),
@@ -231,6 +290,7 @@ export function FloatingCharacters() {
     width: 148,
     flip: 1,
     visible: false,
+    duration: 0,
   });
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const lastTrailPoint = useRef<{ turnId: number; x: number; y: number } | null>(null);
@@ -247,6 +307,22 @@ export function FloatingCharacters() {
               characters[index].baseFacing,
               characters[index].orientation,
               characters[index].edge,
+              motion,
+            )
+          : motion,
+      ),
+    );
+  }, []);
+
+  const moveCharacterToEdge = useCallback((index: number) => {
+    setMotions((current) =>
+      current.map((motion, motionIndex) =>
+        motionIndex === index
+          ? createEdgeMotion(
+              characters[index].displayWidth,
+              characters[index].displayWidth * characters[index].height / characters[index].width,
+              characters[index].baseFacing,
+              characters[index].orientation,
               motion,
             )
           : motion,
@@ -276,6 +352,7 @@ export function FloatingCharacters() {
           ...findOpenSpot(width, height),
           width,
           visible: true,
+          duration: 0,
         });
         timer = window.setTimeout(() => {
           setOrangeSpot((current) => ({ ...current, visible: false }));
@@ -397,6 +474,27 @@ export function FloatingCharacters() {
     void video.play();
   };
 
+  const moveOrangeCatToEdge = () => {
+    setOrangeSpot((current) => {
+      const height = current.width * 980 / 1604;
+      const maxX = Math.max(10, window.innerWidth - current.width - 10);
+      const maxY = Math.max(70, window.innerHeight - height - 10);
+      const destinations = [
+        { x: 10, y: Math.max(70, Math.min(maxY, current.y)) },
+        { x: maxX, y: Math.max(70, Math.min(maxY, current.y)) },
+        { x: Math.max(10, Math.min(maxX, current.x)), y: 70 },
+      ];
+      const destination = destinations[Math.floor(Math.random() * destinations.length)];
+
+      return {
+        ...current,
+        ...destination,
+        flip: destination.x < current.x ? -1 : 1,
+        duration: 1 + Math.random(),
+      };
+    });
+  };
+
   return (
     <div className="floating-character-world">
       <div className="meme-path-trail" aria-hidden="true">
@@ -430,19 +528,23 @@ export function FloatingCharacters() {
             className={`floating-character ${character.className}${motion ? " is-roaming" : ""}`}
             style={style}
             onTransitionEnd={(event) => handleTransitionEnd(index, event)}
-            onClick={isRotatingCat ? () => playRotatingCat(index) : undefined}
-            onKeyDown={isRotatingCat
-              ? (event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    playRotatingCat(index);
-                  }
-                }
-              : undefined}
-            role={isRotatingCat ? "button" : undefined}
-            tabIndex={isRotatingCat ? 0 : undefined}
-            aria-label={isRotatingCat ? "회전하는 고양이 재생" : undefined}
-            aria-hidden={isRotatingCat ? undefined : true}
+            data-no-photo-cat
+            onClick={(event) => {
+              event.stopPropagation();
+              if (isRotatingCat) playRotatingCat(index);
+              moveCharacterToEdge(index);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.stopPropagation();
+                if (isRotatingCat) playRotatingCat(index);
+                moveCharacterToEdge(index);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="캐릭터를 화면 가장자리로 이동"
           >
             {character.media === "video" ? (
               <video
@@ -471,10 +573,26 @@ export function FloatingCharacters() {
       })}
       <span
         className={`ambient-neon-tabby${orangeSpot.visible ? " is-visible" : ""}`}
+        data-no-photo-cat
+        role="button"
+        tabIndex={orangeSpot.visible ? 0 : -1}
+        aria-label="캐릭터를 화면 가장자리로 이동"
+        onClick={(event) => {
+          event.stopPropagation();
+          moveOrangeCatToEdge();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            event.stopPropagation();
+            moveOrangeCatToEdge();
+          }
+        }}
         style={{
           width: orangeSpot.width,
           transform: `translate3d(${orangeSpot.x}px, ${orangeSpot.y}px, 0) scaleX(${orangeSpot.flip})`,
-        }}
+          "--character-click-duration": `${orangeSpot.duration}s`,
+        } as CSSProperties}
       >
         <Image
           src="/characters/neon-orange-tabby.png"
