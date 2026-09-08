@@ -317,6 +317,7 @@ button, summary { color: inherit; font: inherit; }
   letter-spacing: 0.04em;
   text-shadow: 0 0 3px rgba(200, 255, 248, 0.42);
 }
+.monitor-kicker-glitch { animation: monitor-kicker-glitch 4.6s steps(1, end) infinite; }
 .monitor-title {
   z-index: 1;
   margin: clamp(0.2rem, 0.4vw, 0.4rem) 0 0;
@@ -371,6 +372,12 @@ button, summary { color: inherit; font: inherit; }
   display: block;
   width: max-content;
   white-space: nowrap;
+}
+.monitor-button-cursor {
+  display: inline-block;
+  width: 0.58ch;
+  margin-left: 0.16em;
+  animation: monitor-button-cursor-blink 820ms steps(1, end) infinite;
 }
 .monitor-button:hover, .monitor-button:focus-visible { background: #81fff0; color: #020817; }
 .monitor-button-primary { background: var(--acid); color: #020817; }
@@ -1180,6 +1187,17 @@ footer {
   66% { transform: translate(2px, 0); clip-path: inset(12% 0 38% 0); }
   82% { transform: translate(-1px, 0); clip-path: inset(0); }
   100% { opacity: 1; transform: translate(0); text-shadow: 1px 0 rgba(255, 60, 172, 0.8), 0 0 4px rgba(200, 255, 248, 0.28); clip-path: inset(0); }
+}
+@keyframes monitor-kicker-glitch {
+  0%, 91%, 96%, 100% { transform: translate(0); text-shadow: 0 0 3px rgba(200, 255, 248, 0.42); }
+  92% { transform: translateX(1px); text-shadow: -1px 0 rgba(255, 60, 172, 0.72), 1px 0 rgba(57, 255, 222, 0.72); }
+  93% { transform: translate(-1px, 1px); text-shadow: 1px 0 rgba(255, 60, 172, 0.62), -1px 0 rgba(57, 255, 222, 0.62); }
+  94% { transform: translateX(1px); }
+  95% { transform: translate(0); }
+}
+@keyframes monitor-button-cursor-blink {
+  0%, 46% { opacity: 1; }
+  47%, 100% { opacity: 0; }
 }
 @keyframes sprinkle-float {
   0%, 100% { translate: 0 0; }
