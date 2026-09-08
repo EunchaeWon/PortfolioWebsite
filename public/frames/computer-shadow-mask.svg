@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <defs>
+    <mask id="clear-hardware" maskUnits="userSpaceOnUse" x="0" y="0" width="640" height="640">
+      <rect width="640" height="640" fill="white"/>
+      <!-- Keep the mouse and its fine cable clear of the shadow overlay. -->
+      <path d="M394 511 L405 490 Q429 474 472 475 L477 505 Q451 522 424 537 L394 532 Z" fill="black"/>
+      <path d="M491 378 L509 443 Q513 455 499 451 L491 448 M493 451 C527 455 560 464 544 474 C526 483 500 488 469 496" fill="none" stroke="black" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <rect width="640" height="640" fill="white" mask="url(#clear-hardware)"/>
+</svg>

@@ -1,0 +1,65 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.codex-devserver.*.log
+
+# Local source/reference assets that are not loaded by the published site
+/public/world/faces-wall.glb
+/public/world/spider-monster.glb
+/public/world/nowhere-now-here-preview.png
+/public/world/cat-paw-world.glb
+/public/world/cat-paw-world-web.glb
+/public/world/cat-paw-world-web2.glb
+/public/world/cat-paw-world-web-2k.glb
+/public/world/cat-paw-world-web-2k-v2.glb
+/public/frames/cassette-reference-sheet.png
+/public/frames/cassette-device-v2.png
+/public/frames/cassette-device-v3.png
+/public/frames/cassette-device-v4.png
+/public/frames/cassette-device-v5.png
+/public/frames/red-cassette.png
+/public/frames/silver-radio-transparent-v2.png
+/public/characters/cat-cursor.png
+/public/characters/rainbow-light-cat-cutout.png
+/public/characters/rainbow-light-cat-original-fade.png
+/public/characters/rainbow-meme-cat.png
+/public/characters/spider-monster.png
+/public/projects/in-the-forest-cassette-title.png
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
