@@ -349,6 +349,8 @@ button, summary { color: inherit; font: inherit; }
 .monitor-button {
   display: inline-flex;
   flex: 0 0 auto;
+  width: max-content;
+  min-width: max-content;
   align-items: center;
   justify-content: center;
   min-height: clamp(18px, 2.2vw, 30px);
@@ -363,6 +365,11 @@ button, summary { color: inherit; font: inherit; }
   white-space: nowrap;
   text-transform: uppercase;
   transition: background 120ms ease, color 120ms ease;
+}
+.monitor-button-label {
+  display: block;
+  width: max-content;
+  white-space: nowrap;
 }
 .monitor-button:hover, .monitor-button:focus-visible { background: #81fff0; color: #020817; }
 .monitor-button-primary { background: var(--acid); color: #020817; }

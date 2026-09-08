@@ -64,10 +64,10 @@ export default function Home() {
                   </p>
                   <div className="monitor-actions">
                     <a className="monitor-button monitor-button-primary" href="/world">
-                      View world <span aria-hidden="true">↗</span>
+                      <span className="monitor-button-label">View&nbsp;World&nbsp;↗</span>
                     </a>
                     <a className="monitor-button" href={links.github} target="_blank" rel="noreferrer">
-                      GitHub ↗
+                      <span className="monitor-button-label">GitHub&nbsp;↗</span>
                     </a>
                   </div>
                   <div className="monitor-footnote">
