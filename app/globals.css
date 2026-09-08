@@ -302,7 +302,7 @@ button, summary { color: inherit; font: inherit; }
   justify-content: center;
   padding: clamp(0.36rem, 0.82vw, 0.78rem);
   text-align: center;
-  transform: translateY(-10px) perspective(420px) rotateY(-11deg) rotateZ(-2.1deg) scale(1.055);
+  transform: translate(-10px, -10px) perspective(420px) rotateY(-11deg) rotateZ(-2.1deg) scale(1.055);
   transform-origin: right center;
   transform-style: preserve-3d;
 }
