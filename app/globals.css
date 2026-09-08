@@ -341,12 +341,14 @@ button, summary { color: inherit; font: inherit; }
 .monitor-actions {
   z-index: 4;
   display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: clamp(0.15rem, 0.3vw, 0.3rem);
   margin-top: clamp(0.22rem, 0.45vw, 0.44rem);
 }
 .monitor-button {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
   min-height: clamp(18px, 2.2vw, 30px);
@@ -356,7 +358,9 @@ button, summary { color: inherit; font: inherit; }
   color: #81fff0;
   font-size: clamp(0.68rem, 1.28vw, 1.24rem);
   font-weight: 400;
+  line-height: 1;
   letter-spacing: 0.04em;
+  white-space: nowrap;
   text-transform: uppercase;
   transition: background 120ms ease, color 120ms ease;
 }
