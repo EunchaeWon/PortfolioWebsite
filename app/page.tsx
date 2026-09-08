@@ -90,6 +90,9 @@ export default function Home() {
             <div className="cassette-index-heading">
               <p className="eyebrow">Portfolio archive / Tape library</p>
               <div className="cassette-player-original">
+                <span className="cassette-neon-fragments cassette-neon-fragments-left" aria-hidden="true">
+                  <i /><i /><i />
+                </span>
                 <Image
                   className="cassette-device-image"
                   src="/frames/cassette-device-v6.png"
@@ -98,6 +101,9 @@ export default function Home() {
                   height={600}
                   sizes="(max-width: 680px) 92vw, 520px"
                 />
+                <span className="cassette-neon-fragments cassette-neon-fragments-right" aria-hidden="true">
+                  <i /><i /><i />
+                </span>
               </div>
             </div>
             <CassetteLibrary projects={projects} />
