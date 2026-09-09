@@ -864,7 +864,10 @@ footer {
   position: absolute;
   inset: 0;
   z-index: 0;
+  opacity: 1;
+  transition: opacity 900ms ease;
 }
+.meme-path-trail.is-click-hidden { opacity: 0; transition-duration: 0ms; }
 .meme-trail-pixel {
   position: absolute;
   top: 0;
@@ -901,6 +904,11 @@ footer {
   cursor: pointer;
 }
 .floating-character.is-roaming { opacity: 0.72; }
+.floating-character.is-click-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition-duration: 0s, 0ms !important;
+}
 .floating-character img,
 .floating-character video { position: relative; z-index: 1; display: block; width: 100%; height: auto; user-select: none; transition: transform 220ms ease; }
 .floating-meme-cat img, .floating-robot img { image-rendering: pixelated; }
@@ -999,6 +1007,11 @@ footer {
   will-change: opacity, transform;
 }
 .ambient-neon-tabby.is-visible { opacity: 0.78; }
+.ambient-neon-tabby.is-click-hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition-duration: 0ms, 0s;
+}
 .ambient-neon-tabby img { display: block; width: 100%; height: auto; user-select: none; }
 .static-rainbow-cat {
   position: fixed;

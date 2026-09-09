@@ -35,7 +35,7 @@ export default function Home() {
       <CatCursor />
       <MouseCatSprinkles />
       <NeonCatSprinkles />
-      <FloatingCharacters />
+      <FloatingCharacters vanishOnClick />
       <div className="top-navigation-track">
         <CharacterParade position="top" />
         <Header githubUrl={links.github} />

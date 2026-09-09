@@ -106,6 +106,9 @@ const characters = [
   },
 ] as const;
 
+const clickVanishCharacterIndexes = new Set([0, 2, 3]);
+const clickVanishDelay = 5000;
+
 function findOpenSpot(width: number, height: number): Pick<AmbientSpot, "x" | "y" | "flip"> {
   const margin = 16;
   const top = 76;
@@ -277,7 +280,11 @@ function createEdgeMotion(
   };
 }
 
-export function FloatingCharacters() {
+type FloatingCharactersProps = {
+  vanishOnClick?: boolean;
+};
+
+export function FloatingCharacters({ vanishOnClick = false }: FloatingCharactersProps) {
   const [motions, setMotions] = useState<Array<Motion | null>>(
     characters.map(() => null),
   );
@@ -292,10 +299,52 @@ export function FloatingCharacters() {
     visible: false,
     duration: 0,
   });
+  const [hiddenCharacters, setHiddenCharacters] = useState<Set<number>>(() => new Set());
+  const [orangeHidden, setOrangeHidden] = useState(false);
+  const [orangePaused, setOrangePaused] = useState(false);
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const lastTrailPoint = useRef<{ turnId: number; x: number; y: number } | null>(null);
   const trailPointId = useRef(0);
   const photoCatTimer = useRef<number | null>(null);
+  const reappearTimers = useRef<Map<string, number>>(new Map());
+
+  const queueReappearance = useCallback((key: string, restore: () => void) => {
+    const existingTimer = reappearTimers.current.get(key);
+    if (existingTimer !== undefined) window.clearTimeout(existingTimer);
+
+    const timer = window.setTimeout(() => {
+      reappearTimers.current.delete(key);
+      restore();
+    }, clickVanishDelay);
+    reappearTimers.current.set(key, timer);
+  }, []);
+
+  const vanishCharacter = useCallback((index: number) => {
+    setHiddenCharacters((current) => new Set(current).add(index));
+    queueReappearance(`character-${index}`, () => {
+      setHiddenCharacters((current) => {
+        const next = new Set(current);
+        next.delete(index);
+        return next;
+      });
+    });
+  }, [queueReappearance]);
+
+  const vanishOrangeCat = useCallback(() => {
+    setOrangeHidden(true);
+    setOrangePaused(true);
+    setOrangeSpot((current) => ({ ...current, visible: false, duration: 0 }));
+    queueReappearance("orange-cat", () => {
+      setOrangeSpot((current) => ({ ...current, visible: true, duration: 0 }));
+      setOrangeHidden(false);
+      setOrangePaused(false);
+    });
+  }, [queueReappearance]);
+
+  useEffect(() => () => {
+    reappearTimers.current.forEach((timer) => window.clearTimeout(timer));
+    reappearTimers.current.clear();
+  }, []);
 
   const moveCharacter = useCallback((index: number) => {
     setMotions((current) =>
@@ -331,6 +380,8 @@ export function FloatingCharacters() {
   }, []);
 
   useEffect(() => {
+    if (orangePaused) return;
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches) return;
 
@@ -366,7 +417,7 @@ export function FloatingCharacters() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [orangePaused]);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -497,7 +548,10 @@ export function FloatingCharacters() {
 
   return (
     <div className="floating-character-world">
-      <div className="meme-path-trail" aria-hidden="true">
+      <div
+        className={`meme-path-trail${vanishOnClick && hiddenCharacters.has(0) ? " is-click-hidden" : ""}`}
+        aria-hidden="true"
+      >
         {memeTrail
           .filter((point) => point.turnId === memeMotion?.turnId)
           .map((point) => (
@@ -513,11 +567,13 @@ export function FloatingCharacters() {
       {characters.map((character, index) => {
         const motion = motions[index];
         const isRotatingCat = character.className === "floating-green-screen-cat";
+        const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
+        const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
           ? {
               width: character.displayWidth,
               transform: `translate3d(${motion.x}px, ${motion.y}px, 0) rotate(${motion.rotation}deg)`,
-              transitionDuration: `${motion.duration}s, 280ms`,
+              transitionDuration: `${motion.duration}s, ${vanishesWhenClicked ? 900 : 280}ms`,
             }
           : { width: character.displayWidth };
 
@@ -525,12 +581,16 @@ export function FloatingCharacters() {
           <span
             ref={(node) => { characterRefs.current[index] = node; }}
             key={character.src}
-            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}`}
+            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}${isClickHidden ? " is-click-hidden" : ""}`}
             style={style}
             onTransitionEnd={(event) => handleTransitionEnd(index, event)}
             data-no-photo-cat
             onClick={(event) => {
               event.stopPropagation();
+              if (vanishesWhenClicked) {
+                vanishCharacter(index);
+                return;
+              }
               if (isRotatingCat) playRotatingCat(index);
               moveCharacterToEdge(index);
             }}
@@ -538,13 +598,17 @@ export function FloatingCharacters() {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 event.stopPropagation();
+                if (vanishesWhenClicked) {
+                  vanishCharacter(index);
+                  return;
+                }
                 if (isRotatingCat) playRotatingCat(index);
                 moveCharacterToEdge(index);
               }
             }}
             role="button"
             tabIndex={0}
-            aria-label="캐릭터를 화면 가장자리로 이동"
+            aria-label={vanishesWhenClicked ? "캐릭터 숨기기" : "캐릭터를 화면 가장자리로 이동"}
           >
             {character.media === "video" ? (
               <video
@@ -572,19 +636,27 @@ export function FloatingCharacters() {
         );
       })}
       <span
-        className={`ambient-neon-tabby${orangeSpot.visible ? " is-visible" : ""}`}
+        className={`ambient-neon-tabby${orangeSpot.visible ? " is-visible" : ""}${vanishOnClick && orangeHidden ? " is-click-hidden" : ""}`}
         data-no-photo-cat
         role="button"
         tabIndex={orangeSpot.visible ? 0 : -1}
-        aria-label="캐릭터를 화면 가장자리로 이동"
+        aria-label={vanishOnClick ? "캐릭터 숨기기" : "캐릭터를 화면 가장자리로 이동"}
         onClick={(event) => {
           event.stopPropagation();
+          if (vanishOnClick) {
+            vanishOrangeCat();
+            return;
+          }
           moveOrangeCatToEdge();
         }}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             event.stopPropagation();
+            if (vanishOnClick) {
+              vanishOrangeCat();
+              return;
+            }
             moveOrangeCatToEdge();
           }
         }}
