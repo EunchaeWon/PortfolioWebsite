@@ -50,7 +50,7 @@ const characters = [
     src: "/characters/flying-pixel-robot.png",
     width: 1536,
     height: 1024,
-    displayWidth: 59,
+    displayWidth: 89,
     baseFacing: -1,
     orientation: "horizontal",
     edge: "any",
