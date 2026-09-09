@@ -64,6 +64,31 @@ export function ProjectCard({ project, index, idPrefix = "" }: ProjectCardProps)
         <h3 id={`${projectId}-title`}>{project.title}</h3>
         <p className="project-description">{project.shortDescription}</p>
 
+        <div className="project-overview">
+          {project.overview.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+
+        {project.recognition ? (
+          <aside className="project-recognition" aria-label="Festival recognition">
+            <Image
+              src={project.recognition.image}
+              alt={project.recognition.imageAlt}
+              width={258}
+              height={258}
+              sizes="112px"
+              unoptimized
+            />
+            <div>
+              <span>Festival recognition</span>
+              <strong>{project.recognition.title}</strong>
+              <p>{project.recognition.organization}</p>
+              <small>{project.recognition.date}</small>
+            </div>
+          </aside>
+        ) : null}
+
         <dl className="project-role">
           <div>
             <dt>Role</dt>
@@ -94,6 +119,24 @@ export function ProjectCard({ project, index, idPrefix = "" }: ProjectCardProps)
         ) : (
           <p className="project-private">Private build · Documentation available on request</p>
         )}
+      </div>
+
+      <div className="project-gallery" aria-label={`${project.title} project gallery`}>
+        {project.gallery.map((item) => (
+          <figure key={item.src}>
+            <div className="project-gallery-image">
+              <Image
+                src={item.src}
+                alt={item.alt}
+                fill
+                sizes="(max-width: 680px) 92vw, (max-width: 1100px) 44vw, 28vw"
+                loading="eager"
+                unoptimized
+              />
+            </div>
+            <figcaption>{item.caption}</figcaption>
+          </figure>
+        ))}
       </div>
     </article>
   );
