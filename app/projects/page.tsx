@@ -23,7 +23,7 @@ export default function ProjectsPage() {
       <CatCursor />
       <MouseCatSprinkles />
       <NeonCatSprinkles />
-      <FloatingCharacters />
+      <FloatingCharacters behindProjectCards />
 
       <div className="top-navigation-track">
         <CharacterParade position="top" />

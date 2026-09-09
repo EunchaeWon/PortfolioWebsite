@@ -451,9 +451,12 @@ button, summary { color: inherit; font: inherit; }
 .sprinkle-d { top: 19%; left: 2%; width: 18px; height: 18px; background: var(--sky); transform: rotate(45deg); animation-delay: -3.6s; }
 
 .projects-section {
+  position: relative;
   padding: clamp(5.5rem, 10vw, 10rem) 4vw;
   background: var(--site-checkerboard);
 }
+.projects-section > .section-intro,
+.projects-section > .projects-list { position: relative; z-index: 2; }
 .section-intro { margin-bottom: clamp(3.5rem, 7vw, 7rem); }
 .section-heading-row {
   display: grid;
@@ -915,6 +918,7 @@ footer {
   overflow: hidden;
   pointer-events: none;
 }
+.floating-character-world.is-behind-project-cards { z-index: 1; }
 .meme-path-trail {
   position: absolute;
   inset: 0;

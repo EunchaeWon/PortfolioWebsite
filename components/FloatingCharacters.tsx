@@ -282,9 +282,13 @@ function createEdgeMotion(
 
 type FloatingCharactersProps = {
   vanishOnClick?: boolean;
+  behindProjectCards?: boolean;
 };
 
-export function FloatingCharacters({ vanishOnClick = false }: FloatingCharactersProps) {
+export function FloatingCharacters({
+  vanishOnClick = false,
+  behindProjectCards = false,
+}: FloatingCharactersProps) {
   const [motions, setMotions] = useState<Array<Motion | null>>(
     characters.map(() => null),
   );
@@ -547,7 +551,9 @@ export function FloatingCharacters({ vanishOnClick = false }: FloatingCharacters
   };
 
   return (
-    <div className="floating-character-world">
+    <div
+      className={`floating-character-world${behindProjectCards ? " is-behind-project-cards" : ""}`}
+    >
       <div
         className={`meme-path-trail${vanishOnClick && hiddenCharacters.has(0) ? " is-click-hidden" : ""}`}
         aria-hidden="true"
