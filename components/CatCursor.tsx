@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
-export function CatCursor() {
+type CatCursorProps = {
+  compact?: boolean;
+};
+
+export function CatCursor({ compact = false }: CatCursorProps) {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -98,7 +102,11 @@ export function CatCursor() {
   }, []);
 
   return (
-    <div className="cat-cursor" ref={cursorRef} aria-hidden="true">
+    <div
+      className={`cat-cursor${compact ? " is-compact" : ""}`}
+      ref={cursorRef}
+      aria-hidden="true"
+    >
       <span className="cat-cursor-visual">
         <Image
           className="cat-cursor-paw"

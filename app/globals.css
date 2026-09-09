@@ -1124,6 +1124,10 @@ footer {
   transform-origin: top left;
   transition: transform 120ms ease;
 }
+.cat-cursor.is-compact .cat-cursor-visual {
+  width: 26px;
+  translate: -15px -5px;
+}
 .cat-cursor-paw {
   display: block;
   width: 100%;
