@@ -56,7 +56,9 @@ export default function Home() {
               />
               <div className="monitor-screen monitor-portfolio">
                 <div className="monitor-perspective-content">
-                  <p className="monitor-kicker monitor-kicker-glitch">Eunchae Won</p>
+                  <p className="monitor-kicker monitor-kicker-glitch">
+                    Eunchae WonㆍDigital Artist / Solo Developer
+                  </p>
                   <MonitorGlitchTitle />
                   <p className="monitor-intro">
                     I am building strange worlds for strange beings.

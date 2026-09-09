@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 const titles = [
-  { label: "Solo Developer", lines: ["Solo", "Developer"] },
-  { label: "Digital Artist", lines: ["Digital", "Artist"] },
+  { label: "Klick Here", lines: ["Klick", "Here"] },
+  { label: "See a world", lines: ["See a", "world"] },
 ] as const;
 
 export function MonitorGlitchTitle() {

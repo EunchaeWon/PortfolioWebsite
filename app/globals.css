@@ -312,9 +312,10 @@ button, summary { color: inherit; font: inherit; }
   margin: 0;
   padding-bottom: 0.18rem;
   border-bottom: 1px solid rgba(57, 255, 222, 0.68);
-  font-size: clamp(0.72rem, 1.44vw, 1.4rem);
+  font-size: clamp(0.5rem, 0.86vw, 0.82rem);
   font-weight: 400;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
   text-shadow: 0 0 3px rgba(200, 255, 248, 0.42);
 }
 .monitor-kicker-glitch { animation: monitor-kicker-glitch 4.6s steps(1, end) infinite; }
