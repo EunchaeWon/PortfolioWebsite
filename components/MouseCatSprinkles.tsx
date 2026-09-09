@@ -18,7 +18,11 @@ type MouseSprinkle = {
 
 const neonColors = ["#39ffde", "#ff4db8", "#ffea38", "#9c6cff", "#47a8ff", "#ff8a2b"];
 
-export function MouseCatSprinkles() {
+type MouseCatSprinklesProps = {
+  behindProjectCards?: boolean;
+};
+
+export function MouseCatSprinkles({ behindProjectCards = false }: MouseCatSprinklesProps) {
   const [particles, setParticles] = useState<MouseSprinkle[]>([]);
   const nextId = useRef(0);
   const lastPoint = useRef({ x: 0, y: 0, time: 0 });
@@ -61,7 +65,10 @@ export function MouseCatSprinkles() {
   };
 
   return (
-    <div className="mouse-cat-sprinkle-layer" aria-hidden="true">
+    <div
+      className={`mouse-cat-sprinkle-layer${behindProjectCards ? " is-behind-project-cards" : ""}`}
+      aria-hidden="true"
+    >
       {particles.map((particle) => {
         const style = {
           left: particle.x,

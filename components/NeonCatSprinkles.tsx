@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const sprinkles = [
   { glyph: "ฅ^•ﻌ•^ฅ", className: "neon-sprinkle-1" },
   { glyph: "🐾", className: "neon-sprinkle-2" },
@@ -15,9 +17,16 @@ const sprinkles = [
   { glyph: "₍^. .^₎⟆", className: "neon-sprinkle-14 neon-sprinkle-large" },
 ] as const;
 
-export function NeonCatSprinkles() {
+type NeonCatSprinklesProps = {
+  behindProjectCards?: boolean;
+};
+
+export function NeonCatSprinkles({ behindProjectCards = false }: NeonCatSprinklesProps) {
   return (
-    <div className="neon-cat-sprinkles" aria-hidden="true">
+    <div
+      className={`neon-cat-sprinkles${behindProjectCards ? " is-behind-project-cards" : ""}`}
+      aria-hidden="true"
+    >
       {sprinkles.map((sprinkle) => (
         <span
           className={`neon-cat-sprinkle ${sprinkle.className}`}
@@ -35,4 +44,3 @@ export function NeonCatSprinkles() {
     </div>
   );
 }
-import Image from "next/image";

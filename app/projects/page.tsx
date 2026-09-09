@@ -21,8 +21,8 @@ export default function ProjectsPage() {
   return (
     <>
       <CatCursor />
-      <MouseCatSprinkles />
-      <NeonCatSprinkles />
+      <MouseCatSprinkles behindProjectCards />
+      <NeonCatSprinkles behindProjectCards />
       <FloatingCharacters behindProjectCards />
 
       <div className="top-navigation-track">
@@ -55,7 +55,7 @@ export default function ProjectsPage() {
 
       <CharacterParade position="bottom" />
 
-      <footer>
+      <footer className="projects-footer">
         <span>© 2026 Eunchae Won</span>
         <span>Designed for play · Built with Next.js</span>
         <Link href="/#top">Back to home ↑</Link>

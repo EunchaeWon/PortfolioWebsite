@@ -872,6 +872,7 @@ footer {
   font-weight: 700;
   text-transform: uppercase;
 }
+.projects-footer { position: relative; z-index: 2; }
 
 .world-page {
   position: relative;
@@ -1012,6 +1013,7 @@ footer {
   overflow: hidden;
   pointer-events: none;
 }
+.neon-cat-sprinkles.is-behind-project-cards { z-index: 1; }
 .neon-cat-sprinkle {
   position: absolute;
   display: block;
@@ -1219,6 +1221,7 @@ footer {
   overflow: hidden;
   pointer-events: none;
 }
+.mouse-cat-sprinkle-layer.is-behind-project-cards { z-index: 1; }
 .mouse-cat-sprinkle {
   position: absolute;
   display: block;
