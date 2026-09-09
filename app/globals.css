@@ -867,7 +867,7 @@ footer {
   opacity: 1;
   transition: opacity 900ms ease;
 }
-.meme-path-trail.is-click-hidden { opacity: 0; transition-duration: 0ms; }
+.meme-path-trail.is-click-hidden { opacity: 0; }
 .meme-trail-pixel {
   position: absolute;
   top: 0;
@@ -907,7 +907,6 @@ footer {
 .floating-character.is-click-hidden {
   opacity: 0 !important;
   pointer-events: none;
-  transition-duration: 0s, 0ms !important;
 }
 .floating-character img,
 .floating-character video { position: relative; z-index: 1; display: block; width: 100%; height: auto; user-select: none; transition: transform 220ms ease; }
@@ -1010,7 +1009,6 @@ footer {
 .ambient-neon-tabby.is-click-hidden {
   opacity: 0 !important;
   pointer-events: none;
-  transition-duration: 0ms, 0s;
 }
 .ambient-neon-tabby img { display: block; width: 100%; height: auto; user-select: none; }
 .static-rainbow-cat {
