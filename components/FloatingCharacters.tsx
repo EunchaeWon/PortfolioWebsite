@@ -25,7 +25,7 @@ type TrailPoint = {
 type AmbientSpot = {
   x: number;
   y: number;
-  width: number;
+  baseWidth: number;
   flip: 1 | -1;
   visible: boolean;
   duration: number;
@@ -108,6 +108,11 @@ const characters = [
 
 const clickVanishCharacterIndexes = new Set([0, 2, 3]);
 const clickVanishDelay = 5000;
+const characterScaleViewport = 1200;
+
+function getCharacterScale() {
+  return Math.min(1, window.innerWidth / characterScaleViewport);
+}
 
 function findOpenSpot(width: number, height: number): Pick<AmbientSpot, "x" | "y" | "flip"> {
   const margin = 16;
@@ -298,7 +303,7 @@ export function FloatingCharacters({
   const [orangeSpot, setOrangeSpot] = useState<AmbientSpot>({
     x: 16,
     y: 76,
-    width: 148,
+    baseWidth: 148,
     flip: 1,
     visible: false,
     duration: 0,
@@ -311,6 +316,14 @@ export function FloatingCharacters({
   const trailPointId = useRef(0);
   const photoCatTimer = useRef<number | null>(null);
   const reappearTimers = useRef<Map<string, number>>(new Map());
+  const [characterScale, setCharacterScale] = useState(1);
+
+  useEffect(() => {
+    const updateCharacterScale = () => setCharacterScale(getCharacterScale());
+    updateCharacterScale();
+    window.addEventListener("resize", updateCharacterScale);
+    return () => window.removeEventListener("resize", updateCharacterScale);
+  }, []);
 
   const queueReappearance = useCallback((key: string, restore: () => void) => {
     const existingTimer = reappearTimers.current.get(key);
@@ -355,8 +368,8 @@ export function FloatingCharacters({
       current.map((motion, motionIndex) =>
         motionIndex === index
           ? createMotion(
-              characters[index].displayWidth,
-              characters[index].displayWidth * characters[index].height / characters[index].width,
+              characters[index].displayWidth * characterScale,
+              characters[index].displayWidth * characterScale * characters[index].height / characters[index].width,
               characters[index].baseFacing,
               characters[index].orientation,
               characters[index].edge,
@@ -365,15 +378,15 @@ export function FloatingCharacters({
           : motion,
       ),
     );
-  }, []);
+  }, [characterScale]);
 
   const moveCharacterToEdge = useCallback((index: number) => {
     setMotions((current) =>
       current.map((motion, motionIndex) =>
         motionIndex === index
           ? createEdgeMotion(
-              characters[index].displayWidth,
-              characters[index].displayWidth * characters[index].height / characters[index].width,
+              characters[index].displayWidth * characterScale,
+              characters[index].displayWidth * characterScale * characters[index].height / characters[index].width,
               characters[index].baseFacing,
               characters[index].orientation,
               motion,
@@ -381,7 +394,7 @@ export function FloatingCharacters({
           : motion,
       ),
     );
-  }, []);
+  }, [characterScale]);
 
   useEffect(() => {
     if (orangePaused) return;
@@ -394,18 +407,14 @@ export function FloatingCharacters({
     const queueAppearance = () => {
       timer = window.setTimeout(() => {
         if (cancelled) return;
-        const aspectHeight = 980 / 1604;
-        const maxWidth = Math.max(
-          88,
-          Math.min(720, window.innerWidth * 0.82, (window.innerHeight - 92) / aspectHeight) * 0.4,
-        );
-        const width = Math.random() < 0.48
-          ? maxWidth * (0.65 + Math.random() * 0.35)
-          : Math.min(maxWidth, 44 + Math.random() * 76);
+        const baseWidth = Math.random() < 0.48
+          ? 187 + Math.random() * 101
+          : 44 + Math.random() * 76;
+        const width = baseWidth * characterScale;
         const height = width * 980 / 1604;
         setOrangeSpot({
           ...findOpenSpot(width, height),
-          width,
+          baseWidth,
           visible: true,
           duration: 0,
         });
@@ -421,7 +430,7 @@ export function FloatingCharacters({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [orangePaused]);
+  }, [characterScale, orangePaused]);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -531,8 +540,9 @@ export function FloatingCharacters({
 
   const moveOrangeCatToEdge = () => {
     setOrangeSpot((current) => {
-      const height = current.width * 980 / 1604;
-      const maxX = Math.max(10, window.innerWidth - current.width - 10);
+      const width = current.baseWidth * characterScale;
+      const height = width * 980 / 1604;
+      const maxX = Math.max(10, window.innerWidth - width - 10);
       const maxY = Math.max(70, window.innerHeight - height - 10);
       const destinations = [
         { x: 10, y: Math.max(70, Math.min(maxY, current.y)) },
@@ -565,7 +575,9 @@ export function FloatingCharacters({
               className="meme-trail-pixel"
               key={point.id}
               style={{
-                transform: `translate3d(${point.x - 14}px, ${point.y - 29}px, 0) rotate(${point.rotation}deg)`,
+                width: 28 * characterScale,
+                height: 58 * characterScale,
+                transform: `translate3d(${point.x - 14 * characterScale}px, ${point.y - 29 * characterScale}px, 0) rotate(${point.rotation}deg)`,
               }}
             />
           ))}
@@ -577,11 +589,11 @@ export function FloatingCharacters({
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
           ? {
-              width: character.displayWidth,
+              width: character.displayWidth * characterScale,
               transform: `translate3d(${motion.x}px, ${motion.y}px, 0) rotate(${motion.rotation}deg)`,
               transitionDuration: `${motion.duration}s, ${vanishesWhenClicked ? 900 : 280}ms`,
             }
-          : { width: character.displayWidth };
+          : { width: character.displayWidth * characterScale };
 
         return (
           <span
@@ -667,7 +679,7 @@ export function FloatingCharacters({
           }
         }}
         style={{
-          width: orangeSpot.width,
+          width: orangeSpot.baseWidth * characterScale,
           transform: `translate3d(${orangeSpot.x}px, ${orangeSpot.y}px, 0) scaleX(${orangeSpot.flip})`,
           "--character-click-duration": `${orangeSpot.duration}s`,
         } as CSSProperties}

@@ -46,7 +46,7 @@ export default function ProjectsPage() {
           <div className="projects-list">
             {projects.map((project, index) => (
               <Reveal key={project.slug}>
-                <ProjectCard project={project} index={index} />
+                <ProjectCard project={project} index={index} interactiveGallery />
               </Reveal>
             ))}
           </div>

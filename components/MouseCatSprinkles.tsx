@@ -40,6 +40,7 @@ export function MouseCatSprinkles({ behindProjectCards = false }: MouseCatSprink
 
       lastPoint.current = { x: event.clientX, y: event.clientY, time: now };
       nextId.current += 1;
+      const viewportScale = Math.min(1, window.innerWidth / 1200);
       const particle: MouseSprinkle = {
         id: nextId.current,
         x: event.clientX + (Math.random() - 0.5) * 14,
@@ -48,7 +49,7 @@ export function MouseCatSprinkles({ behindProjectCards = false }: MouseCatSprink
         driftY: -34 - Math.random() * 62,
         rotation: (Math.random() - 0.5) * 90,
         duration: 1000 + Math.random() * 1000,
-        size: 8 + Math.random() * 22,
+        size: (8 + Math.random() * 22) * viewportScale,
         color: neonColors[Math.floor(Math.random() * neonColors.length)],
         glyph: "🐾︎",
       };

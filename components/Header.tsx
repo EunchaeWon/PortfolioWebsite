@@ -9,6 +9,7 @@ type HeaderProps = {
 
 const internalLinks = [
   { label: "Projects", href: "/projects" },
+  { label: "View World", href: "/world" },
   { label: "About", href: "/#about" },
   { label: "Contact", href: "/#contact" },
 ];

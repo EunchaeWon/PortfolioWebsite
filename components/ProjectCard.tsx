@@ -1,13 +1,15 @@
 import Image from "next/image";
+import { ProjectGallery } from "@/components/ProjectGallery";
 import type { Project } from "@/data/projects";
 
 type ProjectCardProps = {
   project: Project;
   index: number;
   idPrefix?: string;
+  interactiveGallery?: boolean;
 };
 
-export function ProjectCard({ project, index, idPrefix = "" }: ProjectCardProps) {
+export function ProjectCard({ project, index, idPrefix = "", interactiveGallery = false }: ProjectCardProps) {
   const links: Array<{ label: string; href: string }> = [];
 
   if (project.playableUrl) links.push({ label: "Play now", href: project.playableUrl });
@@ -121,23 +123,12 @@ export function ProjectCard({ project, index, idPrefix = "" }: ProjectCardProps)
         )}
       </div>
 
-      <div className="project-gallery" aria-label={`${project.title} project gallery`}>
-        {project.gallery.map((item) => (
-          <figure key={item.src}>
-            <div className="project-gallery-image">
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                sizes="(max-width: 680px) 92vw, (max-width: 1100px) 44vw, 28vw"
-                loading="eager"
-                unoptimized
-              />
-            </div>
-            <figcaption>{item.caption}</figcaption>
-          </figure>
-        ))}
-      </div>
+      <ProjectGallery
+        projectTitle={project.title}
+        projectSlug={project.slug}
+        items={project.gallery}
+        interactive={interactiveGallery}
+      />
     </article>
   );
 }
