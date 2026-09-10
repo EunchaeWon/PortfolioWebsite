@@ -2,7 +2,7 @@
 
 import { Html, OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Box3, Group, LoopRepeat, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3 } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AnimationClip, AnimationMixer, FileLoader } from "three";
@@ -420,8 +420,17 @@ function LoadingWorld() {
 }
 
 export function WorldViewer() {
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const dismissGuide = () => setHasInteracted(true);
+
   return (
-    <div className="world-viewer" aria-label="Interactive 3D cat paw world">
+    <div
+      className="world-viewer"
+      aria-label="Interactive 3D cat paw world"
+      onPointerDown={dismissGuide}
+      onTouchStart={dismissGuide}
+      onWheel={dismissGuide}
+    >
       <Canvas
         camera={{ fov: 46, near: 0.01, far: 200, position: [0.028895, -0.093691, -0.011751] }}
         dpr={[1, 1.5]}
@@ -451,6 +460,15 @@ export function WorldViewer() {
         />
       </Canvas>
       <span className="world-scanlines" aria-hidden="true" />
+      <div
+        className={`world-controls-guide${hasInteracted ? " is-hidden" : ""}`}
+        aria-hidden={hasInteracted}
+      >
+        <p className="world-controls-guide-title">How to explore</p>
+        <p><strong>Drag</strong><span>Look around</span></p>
+        <p><strong>Scroll / Pinch</strong><span>Zoom in &amp; out</span></p>
+        <small>Start exploring to close</small>
+      </div>
     </div>
   );
 }

@@ -19,7 +19,6 @@ export default function WorldPage() {
             <p className="eyebrow">Interactive 3D scene</p>
             <h1>Eunchae Won</h1>
           </div>
-          <p>Drag to orbit · Scroll or pinch to zoom</p>
         </section>
 
         <WorldViewer />
