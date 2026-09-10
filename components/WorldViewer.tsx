@@ -423,7 +423,7 @@ export function WorldViewer() {
   return (
     <div className="world-viewer" aria-label="Interactive 3D cat paw world">
       <Canvas
-        camera={{ fov: 46, near: 0.01, far: 200, position: [0, -0.32, 0.88] }}
+        camera={{ fov: 46, near: 0.01, far: 200, position: [0.028895, -0.093691, -0.011751] }}
         dpr={[1, 1.5]}
       >
         <color attach="background" args={["#07152d"]} />
