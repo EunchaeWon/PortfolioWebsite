@@ -40,10 +40,10 @@ function getYouTubeEmbedUrl(videoUrl: string) {
     if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return null;
 
     const start = parseTimeToSeconds(url.searchParams.get("start") ?? url.searchParams.get("t"));
-    const params = new URLSearchParams({ autoplay: "1", rel: "0" });
+    const params = new URLSearchParams({ autoplay: "0", controls: "1", playsinline: "1", rel: "0", enablejsapi: "1" });
     if (start > 0) params.set("start", String(start));
 
-    return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
   } catch {
     return null;
   }
@@ -51,10 +51,35 @@ function getYouTubeEmbedUrl(videoUrl: string) {
 
 export function ProjectVideoButton({ title, videoUrl, label = "Watch" }: ProjectVideoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [playerRevision, setPlayerRevision] = useState(0);
+  const [playerStatus, setPlayerStatus] = useState("Loading YouTube player…");
+  const playerRef = useRef<HTMLIFrameElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const embedUrl = getYouTubeEmbedUrl(videoUrl);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setPlayerStatus("Loading YouTube player…");
+    let ready = false;
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== "https://www.youtube.com" || event.source !== playerRef.current?.contentWindow) return;
+      let message;
+      try { message = typeof event.data === "string" ? JSON.parse(event.data) : event.data; } catch { return; }
+      if (message?.event === "onReady" || message?.event === "infoDelivery") {
+        ready = true;
+        setPlayerStatus("Use the YouTube player controls to start.");
+      }
+      if (message?.info?.playerState === 1 || (message?.event === "onStateChange" && message.info === 1)) setPlayerStatus("Playing");
+      if (message?.event === "onError") setPlayerStatus("YouTube could not play this video in this browser. Try opening this portfolio in Chrome or Edge.");
+    };
+    window.addEventListener("message", onMessage);
+    const timer = window.setTimeout(() => {
+      if (!ready) setPlayerStatus("YouTube is not responding. Try Reload player, or open this portfolio in Chrome or Edge.");
+    }, 12000);
+    return () => { window.clearTimeout(timer); window.removeEventListener("message", onMessage); };
+  }, [isOpen, playerRevision]);
 
   const closeVideo = useCallback(() => {
     setIsOpen(false);
@@ -113,14 +138,20 @@ export function ProjectVideoButton({ title, videoUrl, label = "Watch" }: Project
                 </header>
                 <div className="project-video-frame">
                   <iframe
+                    ref={playerRef}
+                    key={playerRevision}
                     src={embedUrl}
+                    onLoad={() => playerRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: titleId }), "https://www.youtube.com")}
                     title={`${title} video`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
                 </div>
-                <p className="project-video-help">Press Esc or click outside to close.</p>
+                <div className="project-video-help">
+                  <span role="status">{playerStatus}</span>
+                  <button type="button" onClick={() => setPlayerRevision((revision) => revision + 1)}>Reload player</button>
+                </div>
               </div>
             </div>,
             document.body,

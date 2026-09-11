@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CatCursor } from "@/components/CatCursor";
-import { CharacterParade } from "@/components/CharacterParade";
 import { FloatingCharacters } from "@/components/FloatingCharacters";
-import { Header } from "@/components/Header";
 import { MouseCatSprinkles } from "@/components/MouseCatSprinkles";
 import { NeonCatSprinkles } from "@/components/NeonCatSprinkles";
+import { Header } from "@/components/Header";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal } from "@/components/Reveal";
 import { projects } from "@/data/projects";
@@ -21,12 +20,11 @@ export default function ProjectsPage() {
   return (
     <>
       <CatCursor />
+      <FloatingCharacters behindProjectCards />
       <MouseCatSprinkles behindProjectCards />
       <NeonCatSprinkles behindProjectCards />
-      <FloatingCharacters behindProjectCards />
 
       <div className="top-navigation-track">
-        <CharacterParade position="top" />
         <Header githubUrl={githubUrl} />
       </div>
 
@@ -53,7 +51,6 @@ export default function ProjectsPage() {
         </section>
       </main>
 
-      <CharacterParade position="bottom" />
 
       <footer className="projects-footer">
         <span>© 2026 Eunchae Won</span>

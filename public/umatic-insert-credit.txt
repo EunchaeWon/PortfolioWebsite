@@ -1,0 +1,6 @@
+U-matic VTR tape insert sound 2 by LukaCafuka
+https://freesound.org/people/LukaCafuka/sounds/843021/
+License: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+Asset: Freesound high-quality MP3 preview.
+Playback: pause at 0.08 seconds for 2 seconds, then resume with a 1-second fade-in from silence to the original volume. Stop at source timestamp 2.5 seconds (4.5 seconds including the pause).

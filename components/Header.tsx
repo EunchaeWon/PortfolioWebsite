@@ -24,7 +24,7 @@ export function Header({ githubUrl }: HeaderProps) {
   return (
     <header className="site-header">
       <Link className="wordmark" href="/#top" aria-label="Eunchae Won, home">
-        EW<span aria-hidden="true">_</span><small>26</small>
+        Eunchae Won / Home
       </Link>
 
       <nav className="desktop-nav" aria-label="Primary navigation">

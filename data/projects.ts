@@ -388,6 +388,12 @@ const projectCatalog: Project[] = [
       },
     ],
     videoUrl: "https://www.youtube.com/watch?v=csbaT66bSg4&t=6s",
+    videos: [
+      { label: "Watch · Stage 1 — Larva", url: "https://youtu.be/csbaT66bSg4" },
+      { label: "Watch · Stage 2", url: "https://youtu.be/TxwjZpOw71Q" },
+      { label: "Watch · Stage 3", url: "https://youtu.be/suG1WWgUMxo" },
+      { label: "Watch · Stage 4", url: "https://youtu.be/tEIFbsrvv8Y" },
+    ],
     accent: "acid",
   },
 ];

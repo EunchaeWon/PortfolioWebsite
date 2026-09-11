@@ -25,6 +25,7 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
 
     if (document.documentElement.dataset.cassetteAnimating === "true") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.dispatchEvent(new Event("portfolio:cassette-insert"));
       openProject();
       return;
     }
@@ -32,6 +33,7 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
     const cassette = link.querySelector<HTMLElement>(".cassette-case");
     const player = document.querySelector<HTMLElement>(".cassette-player-original img");
     if (!cassette || !player) {
+      document.dispatchEvent(new Event("portfolio:cassette-insert"));
       openProject();
       return;
     }
@@ -70,7 +72,37 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
       { duration: 5000, easing: "linear", fill: "forwards" },
     );
 
+    let frame = 0;
+    let finished = false;
+    const syncAudio = (event: Event) => {
+      const timing = (event as CustomEvent<{ resumeAt: number; duration: number; elapsed: () => number }>).detail;
+      const effect = animation.effect as KeyframeEffect;
+      const frames = effect.getKeyframes();
+      frames[1].offset = (timing.resumeAt * 0.18) / timing.duration;
+      frames[2].offset = (timing.resumeAt * 0.6) / timing.duration;
+      frames[3].offset = timing.resumeAt / timing.duration;
+      // Avoid easing to a standstill at every intermediate pose.
+      frames[0].easing = "cubic-bezier(0.3, 0, 0.7, 1)";
+      frames[1].easing = "linear";
+      frames[2].easing = "linear";
+      frames[3].easing = "ease-out";
+      effect.setKeyframes(frames);
+      effect.updateTiming({ duration: timing.duration * 1000 });
+      animation.pause();
+      const tick = () => {
+        if (finished) return;
+        const elapsed = timing.elapsed();
+        animation.currentTime = Math.min(elapsed, timing.duration) * 1000;
+        if (elapsed >= timing.duration) finish();
+        else frame = requestAnimationFrame(tick);
+      };
+      tick();
+    };
     const finish = () => {
+      if (finished) return;
+      finished = true;
+      cancelAnimationFrame(frame);
+      document.removeEventListener("portfolio:cassette-timing", syncAudio);
       flight.remove();
       link.classList.remove("is-loading");
       delete document.documentElement.dataset.cassetteAnimating;
@@ -78,6 +110,8 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
     };
 
     animation.finished.then(finish, finish);
+    document.addEventListener("portfolio:cassette-timing", syncAudio, { once: true });
+    document.dispatchEvent(new Event("portfolio:cassette-insert"));
   };
 
   return (

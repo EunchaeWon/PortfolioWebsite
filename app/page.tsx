@@ -1,13 +1,11 @@
 import Image from "next/image";
+import { MonitorStatic } from "@/components/MonitorStatic";
 import { DelayedPrismScan } from "@/components/DelayedPrismScan";
 import { CatCursor } from "@/components/CatCursor";
 import { CassetteLibrary } from "@/components/CassetteLibrary";
-import { CharacterParade } from "@/components/CharacterParade";
-import { FloatingCharacters } from "@/components/FloatingCharacters";
+import { AboutDecorations } from "@/components/AboutDecorations";
 import { Header } from "@/components/Header";
 import { MonitorGlitchTitle } from "@/components/MonitorGlitchTitle";
-import { MouseCatSprinkles } from "@/components/MouseCatSprinkles";
-import { NeonCatSprinkles } from "@/components/NeonCatSprinkles";
 import { Reveal } from "@/components/Reveal";
 import { projects } from "@/data/projects";
 
@@ -34,11 +32,8 @@ export default function Home() {
   return (
     <>
       <CatCursor />
-      <MouseCatSprinkles />
-      <NeonCatSprinkles />
-      <FloatingCharacters vanishOnClick />
+      <AboutDecorations />
       <div className="top-navigation-track">
-        <CharacterParade position="top" />
         <Header githubUrl={links.github} />
       </div>
 
@@ -59,6 +54,7 @@ export default function Home() {
                 sizes="(max-width: 900px) 88vw, 92vw"
               />
               <div className="monitor-screen monitor-portfolio">
+                <MonitorStatic />
                 <div className="monitor-perspective-content">
                   <p
                     className="monitor-kicker monitor-kicker-glitch"
@@ -72,15 +68,13 @@ export default function Home() {
                     I am building strange worlds for strange beings.
                   </p>
                   <div className="monitor-actions">
-                    <a className="monitor-button monitor-button-primary" href="/world">
+                    <span className="monitor-button monitor-button-primary">
                       <span className="monitor-button-label">View&nbsp;World&nbsp;↗</span>
-                    </a>
-                    <a className="monitor-button" href={links.github} target="_blank" rel="noreferrer">
-                      <span className="monitor-button-label">GitHub&nbsp;↗</span>
-                    </a>
+                    </span>
                   </div>
                   <span className="monitor-glare" aria-hidden="true" />
                 </div>
+                <a className="monitor-world-link" href="/world" aria-label="Enter Cat Paw World" />
               </div>
               <span className="monitor-click-cursor" aria-hidden="true">
                 <span>↖</span>
@@ -226,7 +220,6 @@ export default function Home() {
 
       </main>
 
-      <CharacterParade position="bottom" />
 
       <footer>
         <span>© 2026 Eunchae Won</span>
