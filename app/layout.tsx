@@ -6,15 +6,17 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: "Eunchae Won — Solo Game Developer",
+    default: "Eunchae Won — Real-Time Digital Artist · Creative Developer",
     template: "%s — Eunchae Won",
   },
   description:
-    "Portfolio of Eunchae Won, an indie solo game developer and digital artist working across Unreal Engine, Unity, 3D, and performance.",
+    "Portfolio of Eunchae Won, a real-time digital artist and creative developer working across Unreal Engine, Unity, 3D, moving image, and performance.",
   applicationName: "Eunchae Won Portfolio",
   authors: [{ name: "Eunchae Won" }],
   creator: "Eunchae Won",
   keywords: [
+    "real-time digital artist",
+    "creative developer",
     "solo game developer",
     "indie game developer",
     "Unreal Engine 5",
@@ -25,13 +27,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "Eunchae Won — Solo Game Developer",
+    title: "Eunchae Won — Real-Time Digital Artist · Creative Developer",
     description:
       "Games, moving-image works, and strange digital characters by Eunchae Won.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Eunchae Won — Solo Game Developer",
+    title: "Eunchae Won — Real-Time Digital Artist · Creative Developer",
     description:
       "Games, moving-image works, and strange digital characters by Eunchae Won.",
   },

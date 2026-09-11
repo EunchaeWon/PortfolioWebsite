@@ -70,7 +70,7 @@ export function ProjectGallery({
                 type="button"
                 ref={(node) => { triggerRefs.current[index] = node; }}
                 onClick={() => setActiveIndex(index)}
-                aria-label={`${projectTitle}: ${item.caption} 크게 보기`}
+                aria-label={`View ${item.caption} from ${projectTitle} at full size`}
               >
                 <span className="project-gallery-image">
                   <Image
@@ -115,7 +115,7 @@ export function ProjectGallery({
               <div className="project-lightbox-window">
                 <header className="project-lightbox-titlebar">
                   <span>{String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}</span>
-                  <button ref={closeButtonRef} type="button" onClick={closeLightbox} aria-label="확대 이미지 닫기">×</button>
+                  <button ref={closeButtonRef} type="button" onClick={closeLightbox} aria-label="Close enlarged image">×</button>
                 </header>
 
                 <div className="project-lightbox-layout">
@@ -142,7 +142,7 @@ export function ProjectGallery({
                         <button type="button" onClick={showNext}>Next →</button>
                       </div>
                     ) : null}
-                    <small>Esc 키 또는 바깥 영역을 누르면 닫힙니다.</small>
+                    <small>Press Esc or click outside to close.</small>
                   </div>
                 </div>
               </div>

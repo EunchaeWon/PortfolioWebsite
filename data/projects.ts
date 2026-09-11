@@ -12,6 +12,20 @@ export type ProjectRecognition = {
   date: string;
   image: string;
   imageAlt: string;
+  sourceUrl?: string;
+  sourceLabel?: string;
+};
+
+export type ProjectBreakdown = {
+  challenge: string;
+  whatIBuilt: string;
+  technicalImplementation: string;
+  result: string;
+};
+
+export type ProjectVideo = {
+  label: string;
+  url: string;
 };
 
 export type Project = {
@@ -28,18 +42,20 @@ export type Project = {
   technologies: string[];
   role: string;
   keyFeatures: string[];
+  breakdown: ProjectBreakdown;
   gallery: ProjectGalleryItem[];
   recognition?: ProjectRecognition;
   githubUrl?: string;
   steamUrl?: string;
   itchUrl?: string;
   videoUrl?: string;
+  videos?: ProjectVideo[];
   artworkUrl?: string;
   playableUrl?: string;
   accent: ProjectAccent;
 };
 
-export const projects: Project[] = [
+const projectCatalog: Project[] = [
   {
     slug: "nowhere-now-here",
     title: "Nowhere, Now Here",
@@ -70,6 +86,12 @@ export const projects: Project[] = [
       "Custom C++ and Blueprint gameplay systems",
       "Original character, costume, texture, and environment pipeline",
     ],
+    breakdown: {
+      challenge: "Turn a cat's ordinary needs into a readable gameplay loop while letting a familiar home gradually become uncanny.",
+      whatIBuilt: "A cat-led exploration game with original characters, costumes, modular rooms, environmental interactions, and a developing narrative progression.",
+      technicalImplementation: "Unreal Engine 5 gameplay systems in C++ and Blueprints, supported by Blender and ZBrush modeling, Substance 3D Painter textures, MetaHuman costume fitting, and performance-aware asset preparation.",
+      result: "An evolving playable prototype that demonstrates an end-to-end real-time production pipeline and a distinct atmospheric world.",
+    },
     gallery: [
       {
         src: "/projects/gallery/nowhere-cat-candle.webp",
@@ -86,18 +108,21 @@ export const projects: Project[] = [
         alt: "A softly lit living room environment created for the game",
         caption: "Modular interior environment asset",
       },
+      {
+        src: "/projects/gallery/faces-creature.webp",
+        alt: "A dark multi-limbed creature model with a hollow rounded head",
+        caption: "Spider Monster character study for the expanded game world",
+      },
     ],
-    githubUrl: "https://github.com/EunchaeWon/Nowhere-Now-here",
     accent: "acid",
   },
   {
     slug: "swan-in-lake",
     title: "Swan in Lake",
     shortDescription:
-      "A chain-of-choices game following Odette as memories and dreams gather into the decision that shapes her fate.",
+      "A chain-of-choices game where Odette gathers memories and decides whether to leave the lake.",
     overview: [
-      "Odette, queen of the swan maidens, is cursed to become a swan by day. When Prince Siegfried asks her to leave the lake and pursue a forgotten dream of becoming a ballerina, she must choose between an unknown future and the family and friends who remain bound to the lake.",
-      "The player searches a quiet forest for memories, dreams, and values. Each discovered item becomes a link in a visible chain, and the accumulated chain leads to one of two endings. The story draws on the artist's own experience of leaving South Korea to study in Germany and reconsidering that choice years later.",
+      "In a quiet forest, memories, dreams, and values become links in a visible chain. The completed chain leads Odette toward one of two endings—leaving for an uncertain future or remaining with those bound to the lake.",
     ],
     thumbnail: "/projects/swan-thumb.webp",
     thumbnailAlt: "Collage of Odette, a swan figure, and a blue illustrated lake",
@@ -114,15 +139,31 @@ export const projects: Project[] = [
     ],
     role: "Solo developer & artist",
     keyFeatures: [
-      "Choice-related items form a visible narrative chain",
-      "Two endings shaped by accumulated memories and values",
-      "Autobiographical story spanning South Korea and Germany",
+      "Memories form a visible narrative chain",
+      "Two endings shaped by the collected links",
+      "Original character and feather-costume pipeline",
     ],
+    breakdown: {
+      challenge: "Turn a personal decision about leaving home into a playable chain of memories—not a dialogue menu.",
+      whatIBuilt: "A forest journey where found memories and values form a visible chain leading to two endings.",
+      technicalImplementation: "Original character, feather costume, animation, and branching progression built for a 3D PC game.",
+      result: "A playable autobiographical work about migration, memory, and the choice to leave.",
+    },
     gallery: [
+      {
+        src: "/projects/gallery/swan-cover-zine.png",
+        alt: "Odette beside layered black swan silhouettes in a blue illustrated landscape",
+        caption: "Early cover collage and visual direction",
+      },
       {
         src: "/projects/gallery/swan-lake.webp",
         alt: "A swan crossing a still lake beneath narrative text",
-        caption: "The lake preserves Odette's memories",
+        caption: "Ending I — Odette remains beside the lake",
+      },
+      {
+        src: "/projects/gallery/swan-leave-ending.jpg",
+        alt: "The alternate ending where Odette leaves the lake to pursue her dream",
+        caption: "Ending II — Odette leaves to follow her dream",
       },
       {
         src: "/projects/gallery/swan-journey.webp",
@@ -134,18 +175,24 @@ export const projects: Project[] = [
         alt: "Full-body 3D model of Odette wearing a layered feather costume",
         caption: "Feather costume modeling and character development",
       },
+      {
+        src: "/projects/gallery/swan-nymph.jpg",
+        alt: "Grayscale sculpt of Odette wearing a crown and feather costume",
+        caption: "Odette sculpt and feather silhouette study",
+      },
     ],
     itchUrl: "https://eunchaewon.itch.io/swan-in-lake",
+    videoUrl: "https://youtu.be/VLePcd6hA2o",
     accent: "violet",
   },
   {
     slug: "faces-within-the-wheel",
     title: "Faces within the Wheel",
     shortDescription:
-      "A looping video work derived from recorded gameplay, moving through unstable bodies, morphing identities, and game-space performance.",
+      "Winner — Best Animation at the Kraken International Film Festival, Autumn 2025. A looping gameplay-derived work of unstable bodies and morphing identities.",
     overview: [
       "The work begins as a game space but is presented as a single-channel looping video assembled from recorded gameplay. Rather than moving toward a conventional win state, it follows bodies that split, multiply, and morph through unstable environments.",
-      "Eunchae Won produced the game, creature modeling, rigging, animation, sound, gameplay recording, and final video. The work was selected for the Autumn 2025 edition of the Kraken International Film Festival.",
+      "Eunchae Won produced the game, creature modeling, rigging, animation, sound, gameplay recording, and final video. The work won Best Animation at the Kraken International Film Festival, Autumn 2025.",
     ],
     thumbnail: "/projects/faces-thumb.webp",
     thumbnailAlt: "A blue multi-armed digital figure surrounded by angular lines",
@@ -158,8 +205,14 @@ export const projects: Project[] = [
     keyFeatures: [
       "Single-channel looping work built from gameplay capture",
       "Original character morphing, animation, and sound",
-      "Official selection, Kraken International Film Festival 2025",
+      "Winner — Best Animation, Kraken International Film Festival 2025",
     ],
+    breakdown: {
+      challenge: "Build a coherent moving-image work from a game space designed around unstable bodies, transformation, and repetition rather than a conventional win state.",
+      whatIBuilt: "The complete real-time work: game space, creatures, body-morph sequences, rigging, animation, sound, gameplay recording, and final looping video.",
+      technicalImplementation: "Original 3D creature modeling and rigging, animated transformations, real-time scene production, gameplay capture, sound construction, and single-channel video editing.",
+      result: "Winner — Best Animation, Kraken International Film Festival, Autumn 2025, with the official festival listing naming Eunchae Won as director.",
+    },
     gallery: [
       {
         src: "/projects/gallery/faces-gameplay.webp",
@@ -167,9 +220,14 @@ export const projects: Project[] = [
         caption: "Recorded gameplay frame from the looping video",
       },
       {
-        src: "/projects/gallery/faces-creature.webp",
-        alt: "A many-limbed creature model with a hollow rounded head",
-        caption: "Creature modeling and body-morph study",
+        src: "/projects/gallery/faces-red-creature.png",
+        alt: "Close view of a red multi-limbed creature model against a black background",
+        caption: "Red creature modeling and anatomy study",
+      },
+      {
+        src: "/projects/gallery/faces-flower-creature.png",
+        alt: "A layered winged figure surrounded by pale organic forms and angular fragments",
+        caption: "Layered figure and winged-form composition",
       },
       {
         src: "/projects/gallery/faces-morph.webp",
@@ -178,13 +236,16 @@ export const projects: Project[] = [
       },
     ],
     recognition: {
-      title: "Official Selection",
+      title: "Winner — Best Animation",
       organization: "Kraken International Film Festival",
       date: "Autumn 2025",
       image: "/projects/gallery/faces-kraken-selection.webp",
       imageAlt: "Official Selection laurel for Kraken International Film Festival, Autumn 2025",
+      sourceUrl: "https://www.krakenfilmfest.com/autumn-2025-winners",
+      sourceLabel: "Official proof · Faces within the Wheel — Best Animation",
     },
     artworkUrl: "https://eunchae.artstation.com/projects/ZlYrRR",
+    videoUrl: "https://youtu.be/vZ_Cf_vFcvo",
     accent: "coral",
   },
   {
@@ -209,6 +270,12 @@ export const projects: Project[] = [
       "Motion captured from live performance and retargeted to 3D creatures",
       "Five roles interpreted across narrator, performers, and digital bodies",
     ],
+    breakdown: {
+      challenge: "Preserve the relationship between an improvised forest performance and its digital reinterpretation across two synchronized video channels.",
+      whatIBuilt: "A live-action performance channel and a corresponding animation channel populated by five original digital creatures representing the work's five roles.",
+      technicalImplementation: "Recorded performer movement was captured, retargeted to 3D characters in Blender, refined through character animation, and synchronized with the live-performance edit.",
+      result: "A dual-channel work in which physical gesture and digital embodiment remain visible together rather than one replacing the other.",
+    },
     gallery: [
       {
         src: "/projects/gallery/forest-landscape.webp",
@@ -226,7 +293,16 @@ export const projects: Project[] = [
         caption: "One of the five digitally reinterpreted roles",
       },
     ],
-    videoUrl: "https://www.youtube.com/watch?v=0GkLYedyLgo",
+    videos: [
+      {
+        label: "Watch · Animation",
+        url: "https://youtu.be/8EsmQielYXA",
+      },
+      {
+        label: "Watch · Live performance",
+        url: "https://youtu.be/0GkLYedyLgo",
+      },
+    ],
     accent: "sky",
   },
   {
@@ -251,6 +327,12 @@ export const projects: Project[] = [
       "Characters act as fragments of self and mirrors of society",
       "Exhibited in the UNESCO City of Media Arts, Karlsruhe",
     ],
+    breakdown: {
+      challenge: "Make the cycle of escape and repetition tangible through navigation, character perspective, and a transformed version of familiar geography.",
+      whatIBuilt: "A surreal 3D PC game whose environments and characters turn routine, hardship, and changes of perspective into an explorable journey.",
+      technicalImplementation: "Unity and C# production using real-world map data, custom 3D environments, character behavior, animation, sound, and scene progression.",
+      result: "A completed game exhibited in Karlsruhe, a UNESCO City of Media Arts, in 2024.",
+    },
     gallery: [
       {
         src: "/projects/gallery/cycle-gameplay.webp",
@@ -258,7 +340,6 @@ export const projects: Project[] = [
         caption: "Gameplay: entering another world to escape routine",
       },
     ],
-    githubUrl: "https://github.com/EunchaeWon/Cycle",
     videoUrl: "https://www.youtube.com/watch?v=BUYdKkmxUrY",
     accent: "violet",
   },
@@ -284,6 +365,12 @@ export const projects: Project[] = [
       "Handmade cocoon controller that embodies restriction and uncertainty",
       "Exhibited at Kinemathek Karlsruhe in 2022",
     ],
+    breakdown: {
+      challenge: "Express the desire to transform—and the frustration of being unable to—through both on-screen play and the player's physical actions.",
+      whatIBuilt: "A four-stage 2D/3D transformation game and a handmade cocoon controller whose awkward form makes restriction part of the experience.",
+      technicalImplementation: "Unity and C# gameplay across four visual forms, combined with physical-computing input, custom controller fabrication, animation, and sound.",
+      result: "An interactive game and physical interface exhibited at Kinemathek Karlsruhe in 2022.",
+    },
     gallery: [
       {
         src: "/projects/gallery/butterfly-stage.webp",
@@ -310,3 +397,9 @@ export const projects: Project[] = [
     accent: "acid",
   },
 ];
+
+export const projects = [...projectCatalog].sort((first, second) => {
+  if (first.slug === "faces-within-the-wheel") return -1;
+  if (second.slug === "faces-within-the-wheel") return 1;
+  return 0;
+});

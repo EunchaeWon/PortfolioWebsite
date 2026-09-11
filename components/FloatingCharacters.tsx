@@ -626,7 +626,7 @@ export function FloatingCharacters({
             }}
             role="button"
             tabIndex={0}
-            aria-label={vanishesWhenClicked ? "캐릭터 숨기기" : "캐릭터를 화면 가장자리로 이동"}
+            aria-label={vanishesWhenClicked ? "Hide character" : "Move character to the edge of the screen"}
           >
             {character.media === "video" ? (
               <video
@@ -658,7 +658,7 @@ export function FloatingCharacters({
         data-no-photo-cat
         role="button"
         tabIndex={orangeSpot.visible ? 0 : -1}
-        aria-label={vanishOnClick ? "캐릭터 숨기기" : "캐릭터를 화면 가장자리로 이동"}
+        aria-label={vanishOnClick ? "Hide character" : "Move character to the edge of the screen"}
         onClick={(event) => {
           event.stopPropagation();
           if (vanishOnClick) {

@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 
 const titles = [
-  { label: "Klick Here", lines: ["Klick", "Here"] },
-  { label: "See a world", lines: ["See a", "world"] },
+  { label: "Hello, Strangers", lines: ["Hello,", "Strangers"], compact: false },
+  {
+    label: "See Eunchae's Strange World",
+    lines: ["See Eunchae's", "Strange", "World"],
+    compact: true,
+  },
 ] as const;
 
 export function MonitorGlitchTitle() {
@@ -21,10 +25,16 @@ export function MonitorGlitchTitle() {
   const title = titles[titleIndex];
 
   return (
-    <h1 className="monitor-title monitor-title-glitch" aria-label={title.label} key={title.label}>
-      <span aria-hidden="true">{title.lines[0]}</span>
-      <br aria-hidden="true" />
-      <span aria-hidden="true">{title.lines[1]}</span>
+    <h1
+      className={`monitor-title monitor-title-glitch${title.compact ? " monitor-title-compact" : ""}`}
+      aria-label={title.label}
+      key={title.label}
+    >
+      {title.lines.map((line) => (
+        <span aria-hidden="true" key={line}>
+          {line}
+        </span>
+      ))}
     </h1>
   );
 }

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ProjectGallery } from "@/components/ProjectGallery";
+import { ProjectVideoButton } from "@/components/ProjectVideoButton";
 import type { Project } from "@/data/projects";
 
 type ProjectCardProps = {
@@ -11,12 +12,12 @@ type ProjectCardProps = {
 
 export function ProjectCard({ project, index, idPrefix = "", interactiveGallery = false }: ProjectCardProps) {
   const links: Array<{ label: string; href: string }> = [];
+  const videos = project.videos ?? (project.videoUrl ? [{ label: "Watch", url: project.videoUrl }] : []);
 
   if (project.playableUrl) links.push({ label: "Play now", href: project.playableUrl });
   if (project.githubUrl) links.push({ label: "GitHub", href: project.githubUrl });
   if (project.steamUrl) links.push({ label: "Steam", href: project.steamUrl });
   if (project.itchUrl) links.push({ label: "itch.io", href: project.itchUrl });
-  if (project.videoUrl) links.push({ label: "Watch", href: project.videoUrl });
   if (project.artworkUrl) links.push({ label: "View work", href: project.artworkUrl });
 
   const number = String(index + 1).padStart(2, "0");
@@ -24,13 +25,16 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
 
   return (
     <article
-      className={`project-card project-card-${project.accent}`}
+      className={`project-card project-card-swan-format project-card-${project.accent}${project.recognition ? " project-card-award" : ""}`}
       id={projectId}
       aria-labelledby={`${projectId}-title`}
     >
       <div className="project-media">
         <div className="project-window-bar">
           <span>{number} / {project.slug}.png</span>
+          {project.recognition ? (
+            <strong className="project-window-award">Winner · Best Animation</strong>
+          ) : null}
           <span aria-hidden="true">● ● ●</span>
         </div>
         <div className="project-image-stack" style={{ position: "relative" }}>
@@ -58,6 +62,35 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
       </div>
 
       <div className="project-content">
+        {project.recognition ? (
+          <aside className="project-recognition project-recognition-winner" aria-label="Verified festival award">
+            <Image
+              src={project.recognition.image}
+              alt={project.recognition.imageAlt}
+              width={258}
+              height={258}
+              sizes="112px"
+              unoptimized
+            />
+            <div>
+              <span>Winner · Verified award</span>
+              <strong>{project.recognition.title}</strong>
+              <p>{project.recognition.organization}</p>
+              <small>{project.recognition.date}</small>
+              {project.recognition.sourceUrl ? (
+                <a
+                  className="project-recognition-source"
+                  href={project.recognition.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {project.recognition.sourceLabel ?? "Official source"} <b aria-hidden="true">↗</b>
+                </a>
+              ) : null}
+            </div>
+          </aside>
+        ) : null}
+
         <div className="project-meta">
           <span>{project.developmentPeriod}</span>
           <span>{project.engine}</span>
@@ -72,24 +105,20 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
           ))}
         </div>
 
-        {project.recognition ? (
-          <aside className="project-recognition" aria-label="Festival recognition">
-            <Image
-              src={project.recognition.image}
-              alt={project.recognition.imageAlt}
-              width={258}
-              height={258}
-              sizes="112px"
-              unoptimized
-            />
-            <div>
-              <span>Festival recognition</span>
-              <strong>{project.recognition.title}</strong>
-              <p>{project.recognition.organization}</p>
-              <small>{project.recognition.date}</small>
+        <section className="project-breakdown" aria-label={`${project.title} project breakdown`}>
+          {[
+            ["Challenge", project.breakdown.challenge],
+            ["What I built", project.breakdown.whatIBuilt],
+            ["Technical implementation", project.breakdown.technicalImplementation],
+            ["Result", project.breakdown.result],
+          ].map(([label, detail], step) => (
+            <div key={label} className="project-breakdown-step">
+              <span>{String(step + 1).padStart(2, "0")}</span>
+              <h4>{label}</h4>
+              <p>{detail}</p>
             </div>
-          </aside>
-        ) : null}
+          ))}
+        </section>
 
         <dl className="project-role">
           <div>
@@ -110,12 +139,20 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
           ))}
         </ul>
 
-        {links.length > 0 ? (
+        {links.length > 0 || videos.length > 0 ? (
           <div className="project-links">
             {links.map((link) => (
               <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
                 {link.label} <span aria-hidden="true">↗</span>
               </a>
+            ))}
+            {videos.map((video) => (
+              <ProjectVideoButton
+                key={video.url}
+                title={project.title}
+                videoUrl={video.url}
+                label={video.label}
+              />
             ))}
           </div>
         ) : (

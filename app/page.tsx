@@ -43,6 +43,7 @@ export default function Home() {
 
       <main>
         <section className="hero" id="top">
+          <span className="home-crt-noise" aria-hidden="true" />
           <div className="hero-device-stage" aria-label="Portfolio preview inside a retro computer monitor">
             <div className="monitor-device-zoom">
               <Image
@@ -56,8 +57,12 @@ export default function Home() {
               />
               <div className="monitor-screen monitor-portfolio">
                 <div className="monitor-perspective-content">
-                  <p className="monitor-kicker monitor-kicker-glitch">
-                    Eunchae WonㆍDigital Artist / Solo Developer
+                  <p
+                    className="monitor-kicker monitor-kicker-glitch"
+                    aria-label="Real-Time Digital Artist · Creative Developer"
+                  >
+                    <span aria-hidden="true">Real-Time Digital Artist ·</span>
+                    <span aria-hidden="true">Creative Developer</span>
                   </p>
                   <MonitorGlitchTitle />
                   <p className="monitor-intro">
@@ -74,6 +79,10 @@ export default function Home() {
                   <span className="monitor-glare" aria-hidden="true" />
                 </div>
               </div>
+              <span className="monitor-click-cursor" aria-hidden="true">
+                <span>↖</span>
+                <small>Click</small>
+              </span>
             </div>
             <div className="cat-status">
               <span className="cat-bob" aria-hidden="true">🐈‍⬛</span>
@@ -89,6 +98,8 @@ export default function Home() {
 
         <Reveal>
           <section className="play-section" id="play">
+            <span className="home-crt-noise" aria-hidden="true" />
+            <span className="cassette-flicker-underlay" aria-hidden="true" />
             <div className="cassette-index-heading">
               <p className="eyebrow">Portfolio archive / Tape library</p>
               <div className="cassette-player-original">
@@ -109,10 +120,18 @@ export default function Home() {
           </section>
         </Reveal>
 
+        <div className="play-about-buffer" aria-hidden="true">
+          <span className="home-crt-noise" />
+        </div>
+
         <section className="about-section" id="about">
           <Reveal className="about-heading">
             <p className="eyebrow">About / Player 01</p>
             <h2>About<br />Eunchae Won</h2>
+            <div className="about-contact-side-title">
+              <p className="eyebrow">Contact / Continue?</p>
+              <h3>Contact</h3>
+            </div>
           </Reveal>
           <Reveal className="about-copy">
             <p className="about-lead">
@@ -126,11 +145,48 @@ export default function Home() {
               to modeling, texturing, rigging, animation, sound, and presentation.
             </p>
 
-            <div className="about-stats" aria-label="Practice highlights">
-              <div><strong>06</strong><span>Selected works</span></div>
-              <div><strong>02</strong><span>Core engines</span></div>
-              <div><strong>2021</strong><span>Practice began</span></div>
-            </div>
+            <section className="education-block" aria-labelledby="education-title">
+              <div className="education-heading">
+                <p className="eyebrow" id="education-title">Education / Degrees</p>
+                <span aria-hidden="true">02 records</span>
+              </div>
+              <div className="education-list">
+                <article>
+                  <span className="education-index">01</span>
+                  <div>
+                    <h3>Diploma in Media Art</h3>
+                    <p>Staatliche Hochschule für Gestaltung Karlsruhe (HfG Karlsruhe)</p>
+                    <small>Karlsruhe, Germany · Sep 2021–Sep 2025 · Final grade 1.7 (Very good)</small>
+                  </div>
+                </article>
+                <article>
+                  <span className="education-index">02</span>
+                  <div>
+                    <h3>Bachelor of Fine Art</h3>
+                    <p>Kookmin University</p>
+                    <small>Seoul, South Korea · Mar 2014–Feb 2019</small>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section className="about-contact-card" id="contact" aria-labelledby="about-contact-title">
+              <div className="about-contact-heading">
+                <p className="eyebrow">Contact / Continue?</p>
+                <h3 id="about-contact-title">Get in touch</h3>
+              </div>
+              <div className="about-contact-links">
+                <a href={links.email}>
+                  <span>Email</span><strong>artiwon821@gmail.com</strong><i aria-hidden="true">↗</i>
+                </a>
+                <a href={links.github} target="_blank" rel="noreferrer">
+                  <span>GitHub</span><strong>@EunchaeWon</strong><i aria-hidden="true">↗</i>
+                </a>
+                <a href={links.itch} target="_blank" rel="noreferrer">
+                  <span>itch.io</span><strong>eunchaewon.itch.io</strong><i aria-hidden="true">↗</i>
+                </a>
+              </div>
+            </section>
           </Reveal>
 
           <Reveal className="skills-block">
@@ -158,25 +214,6 @@ export default function Home() {
           </Reveal>
         </section>
 
-        <section className="contact-section" id="contact">
-          <div className="contact-cat" aria-hidden="true">
-            <span>🐈</span>
-            <small>say hello!</small>
-          </div>
-          <p className="eyebrow">Contact / Continue?</p>
-          <h2>Contact</h2>
-          <div className="contact-links">
-            <a href={links.email}>
-              <span>Email</span><strong>artiwon821@gmail.com</strong><i>↗</i>
-            </a>
-            <a href={links.github} target="_blank" rel="noreferrer">
-              <span>GitHub</span><strong>@EunchaeWon</strong><i>↗</i>
-            </a>
-            <a href={links.itch} target="_blank" rel="noreferrer">
-              <span>itch.io</span><strong>eunchaewon.itch.io</strong><i>↗</i>
-            </a>
-          </div>
-        </section>
       </main>
 
       <CharacterParade position="bottom" />
