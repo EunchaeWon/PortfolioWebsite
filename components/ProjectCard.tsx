@@ -25,7 +25,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
 
   return (
     <article
-      className={`project-card project-card-swan-format project-card-${project.accent}${project.recognition ? " project-card-award" : ""}`}
+      className={`project-card project-card-swan-format project-card-${project.accent}${project.slug === "cycle" ? " project-card-cycle" : ""}${project.recognition ? " project-card-award" : ""}`}
       id={projectId}
       aria-labelledby={`${projectId}-title`}
     >
@@ -48,7 +48,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
             loading={index === 0 ? undefined : "eager"}
             unoptimized
           />
-          <Image
+          {project.slug !== "cycle" && <><Image
             className="project-image project-image-alt"
             src={project.gameplayMedia}
             alt={project.gameplayAlt}
@@ -57,7 +57,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
             loading="eager"
             unoptimized
           />
-          <span className="media-hint" aria-hidden="true">hover / second view</span>
+          <span className="media-hint" aria-hidden="true">hover / second view</span></>}
         </div>
       </div>
 
@@ -160,12 +160,12 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
         )}
       </div>
 
-      <ProjectGallery
+      {project.gallery.length > 0 && <ProjectGallery
         projectTitle={project.title}
         projectSlug={project.slug}
         items={project.gallery}
         interactive={interactiveGallery}
-      />
+      />}
     </article>
   );
 }

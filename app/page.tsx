@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { DelayedPrismScan } from "@/components/DelayedPrismScan";
 import { CatCursor } from "@/components/CatCursor";
 import { CassetteLibrary } from "@/components/CassetteLibrary";
 import { CharacterParade } from "@/components/CharacterParade";
@@ -43,7 +44,9 @@ export default function Home() {
 
       <main>
         <section className="hero" id="top">
+          <span className="home-edge-fade" aria-hidden="true" />
           <span className="home-crt-noise" aria-hidden="true" />
+          <DelayedPrismScan />
           <div className="hero-device-stage" aria-label="Portfolio preview inside a retro computer monitor">
             <div className="monitor-device-zoom">
               <Image
@@ -96,8 +99,14 @@ export default function Home() {
           <span className="sprinkle sprinkle-d" aria-hidden="true" />
         </section>
 
+        <div className="hero-play-buffer" aria-hidden="true">
+          <span className="home-edge-fade" />
+          <span className="home-crt-noise" />
+        </div>
+
         <Reveal>
           <section className="play-section" id="play">
+            <span className="home-edge-fade" aria-hidden="true" />
             <span className="home-crt-noise" aria-hidden="true" />
             <span className="cassette-flicker-underlay" aria-hidden="true" />
             <div className="cassette-index-heading">
@@ -121,6 +130,7 @@ export default function Home() {
         </Reveal>
 
         <div className="play-about-buffer" aria-hidden="true">
+          <span className="home-edge-fade" />
           <span className="home-crt-noise" />
         </div>
 

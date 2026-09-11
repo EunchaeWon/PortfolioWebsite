@@ -98,7 +98,7 @@ const characters = [
     src: "/characters/banana-cat.gif",
     width: 75,
     height: 165,
-    displayWidth: 76,
+    displayWidth: 38,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
@@ -303,7 +303,7 @@ export function FloatingCharacters({
   const [orangeSpot, setOrangeSpot] = useState<AmbientSpot>({
     x: 16,
     y: 76,
-    baseWidth: 148,
+    baseWidth: 74,
     flip: 1,
     visible: false,
     duration: 0,
@@ -408,8 +408,8 @@ export function FloatingCharacters({
       timer = window.setTimeout(() => {
         if (cancelled) return;
         const baseWidth = Math.random() < 0.48
-          ? 187 + Math.random() * 101
-          : 44 + Math.random() * 76;
+          ? 93.5 + Math.random() * 50.5
+          : 22 + Math.random() * 38;
         const width = baseWidth * characterScale;
         const height = width * 980 / 1604;
         setOrangeSpot({

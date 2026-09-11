@@ -333,13 +333,7 @@ const projectCatalog: Project[] = [
       technicalImplementation: "Unity and C# production using real-world map data, custom 3D environments, character behavior, animation, sound, and scene progression.",
       result: "A completed game exhibited in Karlsruhe, a UNESCO City of Media Arts, in 2024.",
     },
-    gallery: [
-      {
-        src: "/projects/gallery/cycle-gameplay.webp",
-        alt: "A player character walking toward a red-lit opening in a surreal landscape",
-        caption: "Gameplay: entering another world to escape routine",
-      },
-    ],
+    gallery: [],
     videoUrl: "https://www.youtube.com/watch?v=BUYdKkmxUrY",
     accent: "violet",
   },
