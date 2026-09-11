@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { CharacterImage as Image } from "@/components/CharacterImage";
 import type { CSSProperties, TransitionEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 

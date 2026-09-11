@@ -411,7 +411,7 @@ button, summary { color: inherit; font: inherit; }
   filter: blur(8px) drop-shadow(12px 22px 24px rgba(154, 93, 238, 0.42)) drop-shadow(24px 38px 42px rgba(112, 77, 194, 0.28));
   pointer-events: none;
   transform: scale(1.25);
-  animation: hero-gradient-flicker 5.8s linear infinite;
+  animation: none;
   opacity: 0.25;
 }
 .hero-device-stage::after {
@@ -639,7 +639,7 @@ button, summary { color: inherit; font: inherit; }
   background:
     linear-gradient(180deg, transparent 36%, rgba(142, 255, 224, 0.18) 44%, rgba(191, 180, 255, 0.1) 49%, transparent 56%) 0 120% / 100% 220%,
     repeating-linear-gradient(0deg, transparent 0 4px, rgba(96, 218, 192, 0.14) 4px 5px, transparent 5px 9px),
-    url("/textures/tv-static-no-signal.svg") 0 0 / 360px 360px;
+    var(--crt-noise-texture, url("/textures/tv-static-no-signal.svg")) 0 0 / 360px 360px;
   mix-blend-mode: screen;
   opacity: 0.16;
   animation: monitor-wavy-static 7s linear infinite;
@@ -706,6 +706,11 @@ button, summary { color: inherit; font: inherit; }
   border: var(--line);
   animation: sprinkle-float 5s ease-in-out infinite;
 }
+.hero .sprinkle,
+.hero .cat-bob {
+  animation: none;
+  will-change: auto;
+}
 .sprinkle-a { top: 13%; right: 47%; background: var(--coral); transform: rotate(24deg); }
 .sprinkle-b { bottom: 12%; left: 43%; background: var(--violet); transform: rotate(-18deg); animation-delay: -1.4s; }
 .sprinkle-c { top: 24%; right: 2%; background: var(--acid); transform: rotate(71deg); animation-delay: -2.8s; }
@@ -731,7 +736,7 @@ button, summary { color: inherit; font: inherit; }
 .projects-section::before {
   z-index: 0;
   background:
-    url("/textures/tv-static-no-signal.svg") 0 0 / 256px 256px repeat,
+    var(--crt-noise-texture, url("/textures/tv-static-no-signal.svg")) 0 0 / 256px 256px repeat,
     radial-gradient(circle, rgba(240, 247, 255, 0.5) 0 0.65px, transparent 1px) 0 0 / 3px 3px,
     radial-gradient(circle, rgba(61, 91, 172, 0.62) 0 0.8px, transparent 1.2px) 1px 2px / 5px 5px,
     repeating-linear-gradient(91deg, rgba(231, 239, 255, 0.12) 0 1px, transparent 1px 3px),
@@ -1691,6 +1696,9 @@ button, summary { color: inherit; font: inherit; }
     radial-gradient(circle at 74% 72%, rgba(76, 94, 108, 0.24), transparent 38%),
     #2f4c6a;
 }
+@media (max-width: 680px) {
+  :root { --crt-noise-texture: url("/textures/tv-static-no-signal.webp"); }
+}
 .home-crt-noise {
   position: absolute;
   inset: -3px;
@@ -1698,7 +1706,7 @@ button, summary { color: inherit; font: inherit; }
   background:
     repeating-linear-gradient(0deg, rgba(225, 236, 242, 0.11) 0 1px, rgba(31, 39, 45, 0.04) 1px 2px, transparent 2px 5px),
     linear-gradient(rgba(62, 98, 137, 0.82), rgba(62, 98, 137, 0.82)),
-    url("/textures/tv-static-no-signal.svg") 0 0 / 2560px 2560px repeat;
+    var(--crt-noise-texture, url("/textures/tv-static-no-signal.svg")) 0 0 / 2560px 2560px repeat;
   background-blend-mode: soft-light, screen, normal;
   filter: grayscale(0.1) saturate(0.82) contrast(1.22) brightness(0.84);
   mix-blend-mode: normal;
@@ -1722,7 +1730,7 @@ button, summary { color: inherit; font: inherit; }
   mix-blend-mode: screen;
   opacity: 0.32;
   pointer-events: none;
-  animation: home-prism-drift 17.5s ease-in-out infinite alternate;
+  animation: none;
 }
 .play-about-buffer {
   position: relative;
@@ -1839,6 +1847,16 @@ button, summary { color: inherit; font: inherit; }
   pointer-events: none;
   transform: translate(-50%, -8%) rotate(1.1deg);
   animation: cassette-underlay-flicker 4.6s steps(2, end) infinite;
+}
+/* Keep the tape library and its buffers static: no continuous full-area repaint. */
+.play-section::before,
+.play-section::after,
+.play-section .cassette-flicker-underlay,
+.play-section > .home-crt-noise::after,
+.hero-play-buffer > .home-crt-noise::after,
+.play-about-buffer > .home-crt-noise::after {
+  animation: none;
+  will-change: auto;
 }
 .cassette-index-heading, .cassette-library { position: relative; z-index: 1; }
 .cassette-index-heading { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: clamp(0.25rem, 0.8svh, 0.65rem); min-height: 0; place-items: center; }

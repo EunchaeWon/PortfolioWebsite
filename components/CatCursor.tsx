@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { CharacterImage as Image } from "@/components/CharacterImage";
 import { useEffect, useRef } from "react";
 
 type CatCursorProps = {
