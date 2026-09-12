@@ -633,24 +633,16 @@ button, summary { color: inherit; font: inherit; }
 .monitor-world-link:focus-visible { outline: 3px solid #b8fff1; outline-offset: -5px; }
 .monitor-screen::before {
   position: absolute;
-  inset: -8%;
+  inset: 0;
   z-index: 3;
   content: "";
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 36%, rgba(142, 255, 224, 0.18) 44%, rgba(191, 180, 255, 0.1) 49%, transparent 56%) 0 120% / 100% 220%,
+    linear-gradient(180deg, transparent 36%, rgba(142, 255, 224, 0.18) 44%, rgba(191, 180, 255, 0.1) 49%, transparent 56%),
     repeating-linear-gradient(0deg, transparent 0 4px, rgba(96, 218, 192, 0.14) 4px 5px, transparent 5px 9px),
     var(--crt-noise-texture, url("/textures/tv-static-no-signal.svg")) 0 0 / 360px 360px;
   mix-blend-mode: screen;
   opacity: 0.16;
-  animation: monitor-wavy-static 7s linear infinite;
-}
-@keyframes monitor-wavy-static {
-  0% { transform: translateX(-1.5%) skewX(-1.5deg); background-position: 0 120%, 0 0, 0 0; }
-  25% { transform: translateX(1.5%) skewX(1.8deg); background-position: 0 65%, 3px 2px, 41px -29px; }
-  50% { transform: translateX(-1%) skewX(-2deg); background-position: 0 10%, -2px 4px, -37px 19px; }
-  75% { transform: translateX(1%) skewX(1.4deg); background-position: 0 -45%, 2px 6px, 23px 47px; }
-  100% { transform: translateX(-1.5%) skewX(-1.5deg); background-position: 0 -100%, 0 9px, 0 0; }
 }
 .monitor-glare {
   position: absolute;
@@ -1710,11 +1702,11 @@ button, summary { color: inherit; font: inherit; }
     var(--crt-noise-texture, url("/textures/tv-static-no-signal.svg")) 0 0 / 2560px 2560px repeat;
   background-blend-mode: soft-light, screen, normal;
   filter: grayscale(0.1) saturate(0.82) contrast(1.22) brightness(0.84);
-  mix-blend-mode: normal;
   opacity: 0.9;
   pointer-events: none;
-  animation: home-crt-noise 350ms steps(2, end) infinite;
+  animation: home-crt-noise 1500ms steps(2, end) infinite;
 }
+.home-crt-noise.is-paused { animation-play-state: paused; }
 .home-crt-noise::after {
   position: absolute;
   inset: -8%;

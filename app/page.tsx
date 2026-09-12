@@ -7,6 +7,8 @@ import { AboutDecorations } from "@/components/AboutDecorations";
 import { Header } from "@/components/Header";
 import { MonitorGlitchTitle } from "@/components/MonitorGlitchTitle";
 import { Reveal } from "@/components/Reveal";
+import { HomeCrtNoise } from "@/components/HomeCrtNoise";
+import { TopToCassetteScroll } from "@/components/TopToCassetteScroll";
 import { projects } from "@/data/projects";
 
 const links = {
@@ -32,6 +34,7 @@ export default function Home() {
   return (
     <>
       <CatCursor />
+      <TopToCassetteScroll />
       <AboutDecorations />
       <div className="top-navigation-track">
         <Header githubUrl={links.github} />
@@ -40,7 +43,7 @@ export default function Home() {
       <main>
         <section className="hero" id="top">
           <span className="home-edge-fade" aria-hidden="true" />
-          <span className="home-crt-noise" aria-hidden="true" />
+          <HomeCrtNoise />
           <DelayedPrismScan />
           <div className="hero-device-stage" aria-label="Portfolio preview inside a retro computer monitor">
             <div className="monitor-device-zoom">
@@ -95,13 +98,13 @@ export default function Home() {
 
         <div className="hero-play-buffer" aria-hidden="true">
           <span className="home-edge-fade" />
-          <span className="home-crt-noise" />
+          <HomeCrtNoise />
         </div>
 
         <Reveal>
           <section className="play-section" id="play">
             <span className="home-edge-fade" aria-hidden="true" />
-            <span className="home-crt-noise" aria-hidden="true" />
+            <HomeCrtNoise />
             <span className="cassette-flicker-underlay" aria-hidden="true" />
             <div className="cassette-index-heading">
               <p className="eyebrow">Portfolio archive / Tape library</p>
@@ -125,7 +128,7 @@ export default function Home() {
 
         <div className="play-about-buffer" aria-hidden="true">
           <span className="home-edge-fade" />
-          <span className="home-crt-noise" />
+          <HomeCrtNoise />
         </div>
 
         <section className="about-section" id="about">

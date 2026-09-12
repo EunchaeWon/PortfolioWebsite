@@ -74,8 +74,6 @@ class SiteAudioEngine {
   get running() { return !this.disposed && this.context?.state === "running"; }
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
-  private ambience: AudioBufferSourceNode | null = null;
-  private mainAmbienceGain: GainNode | null = null;
   private projectsAmbience: AudioBufferSourceNode | null = null;
   private projectsHum: OscillatorNode | null = null;
   private projectsWarble: OscillatorNode | null = null;
@@ -117,7 +115,7 @@ class SiteAudioEngine {
       return false;
     }
     if (!this.running) return false;
-    if (!this.ambience) {
+    if (!this.projectsAmbience) {
       this.startAmbience();
       this.applyTheme();
     }
@@ -149,38 +147,7 @@ class SiteAudioEngine {
   private startAmbience() {
     const context = this.context;
     const master = this.master;
-    if (!context || !master || this.ambience) return;
-
-    const frameCount = context.sampleRate * 3;
-    const buffer = context.createBuffer(1, frameCount, context.sampleRate);
-    const samples = buffer.getChannelData(0);
-    let drift = 0;
-
-    for (let index = 0; index < frameCount; index += 1) {
-      const white = Math.random() * 2 - 1;
-      drift = drift * 0.72 + white * 0.28;
-      samples[index] = white * 0.48 + drift * 0.52;
-    }
-
-    const source = context.createBufferSource();
-    const highPass = context.createBiquadFilter();
-    const lowPass = context.createBiquadFilter();
-    const staticGain = context.createGain();
-
-    source.buffer = buffer;
-    source.loop = true;
-    highPass.type = "highpass";
-    highPass.frequency.value = 190;
-    lowPass.type = "lowpass";
-    lowPass.frequency.value = 5400;
-    staticGain.gain.value = 0;
-
-    source.connect(highPass);
-    highPass.connect(lowPass);
-    lowPass.connect(staticGain);
-    source.start();
-    this.ambience = source;
-    this.mainAmbienceGain = staticGain;
+    if (!context || !master || this.projectsAmbience) return;
 
     // Whole-second loop boundaries avoid fractional-frame resampling at the seam.
     const tapeBuffer = context.createBuffer(1, context.sampleRate * 3, context.sampleRate);
@@ -365,11 +332,11 @@ class SiteAudioEngine {
     const context = this.context;
     if (!context) return;
     const levels = {
-      main: [0.00068, 0, 0],
-      projects: [0, 0.016, 0],
-      world: [0, 0, 0.052],
+      main: [0, 0],
+      projects: [0.016, 0],
+      world: [0, 0.052],
     }[this.theme];
-    const gains = [this.mainAmbienceGain, this.projectsAmbienceGain, this.worldAmbienceGain];
+    const gains = [this.projectsAmbienceGain, this.worldAmbienceGain];
     gains.forEach((gain, index) => {
       if (!gain) return;
       gain.disconnect();
@@ -584,7 +551,6 @@ class SiteAudioEngine {
     this.onStateChange = undefined;
     for (const nodes of this.effects) for (const node of nodes) node.disconnect();
     this.effects.clear();
-    this.ambience?.stop();
     this.projectsAmbience?.stop();
     this.projectsHum?.stop();
     this.projectsWarble?.stop();
@@ -638,6 +604,7 @@ export function SiteAudio() {
 
   useEffect(() => {
     const engine = engineRef.current;
+    let cancelled = false;
     if (engine) {
       void engine.preloadCassette();
       void engine.preloadCassetteHover();
@@ -646,6 +613,13 @@ export function SiteAudio() {
         setStarted(running);
       };
       engine.setTheme(window.location.pathname.startsWith("/world") ? "world" : window.location.pathname.startsWith("/projects") ? "projects" : "main");
+      // Start immediately when autoplay is permitted; gesture handlers retry otherwise.
+      void engine.unlock().then((ready) => {
+        if (cancelled || !ready || !enabledRef.current || engineRef.current !== engine) return;
+        engine.setEnabled(true);
+        startedRef.current = true;
+        setStarted(true);
+      });
     }
     let lastHoverAt = 0;
     const playForTarget = (target: EventTarget | null) => {
@@ -746,6 +720,7 @@ export function SiteAudio() {
     document.addEventListener("pointerout", handleHoverEnd, true);
     document.addEventListener("keydown", handleKey, true);
     return () => {
+      cancelled = true;
       document.removeEventListener("portfolio:cassette-close", handleCassetteClose);
       document.removeEventListener("portfolio:cassette-hover-end", handleCassetteHoverEnd);
       document.removeEventListener("portfolio:cassette-insert", handleCassette);
