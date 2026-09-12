@@ -3,7 +3,7 @@
 import { Html, OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Box3, Group, LoopRepeat, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3 } from "three";
+import { Box3, Group, LoopRepeat, LoopPingPong, MOUSE, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3 } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AnimationClip, AnimationMixer, FileLoader } from "three";
 import { PerspectiveCamera } from "three";
@@ -25,7 +25,7 @@ const SPIDER_PAW_ROUTE = [
 ];
 
 type SpiderMode = "walk" | "twitch";
-type WorldLayer = "facewall" | "spiderMonsterSmall" | "spiderMonsterLarge" | "catPaw";
+type WorldLayer = "facewall" | "spiderMonsterSmall" | "spiderMonsterLarge" | "catPaw" | "odette";
 type WorldLayers = Record<WorldLayer, boolean>;
 
 // Retained only as an import recipe for a later deliberate re-add; it is not
@@ -241,6 +241,13 @@ function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
     // Object3D.clone shares the original skeleton. Rebind the cloned mesh to
     // the cloned bones so the mixer and renderer operate on the same rig.
     const model = cloneSkeleton(scene);
+    // Keep all paw meshes together around the authored origin; other layers
+    // remain outside this pivot and retain their own animation.
+    const pawPivot = new Group();
+    pawPivot.name = "PawRotationPivot";
+    const paws = model.children.filter(object => object.name.startsWith("PM3D_"));
+    model.add(pawPivot);
+    paws.forEach(object => pawPivot.add(object));
     const armature = model.getObjectByName("Armature");
     const locomotion = new Group();
     locomotion.name = "SpiderLocomotion";
@@ -251,6 +258,7 @@ function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
     }
     return model;
   }, [scene]);
+  const pawPivot = useMemo(() => model.getObjectByName("PawRotationPivot"), [model]);
   const worldRoot = useRef<Group>(null);
   const giantSpider = useMemo(() => {
     const copy = cloneSkeleton(scene);
@@ -311,14 +319,12 @@ function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
     const faceWall = model.getObjectByName("FemaleHead_low");
     if (faceWall) faceWall.visible = layers.facewall;
 
-    model.children.forEach((object) => {
-      if (object.name.startsWith("PM3D_")) object.visible = layers.catPaw;
-    });
+    if (pawPivot) pawPivot.visible = layers.catPaw;
 
     const smallSpider = model.getObjectByName("Armature");
     if (smallSpider) smallSpider.visible = layers.spiderMonsterSmall;
     giantSpider.visible = layers.spiderMonsterLarge;
-  }, [giantSpider, layers.catPaw, layers.facewall, layers.spiderMonsterLarge, layers.spiderMonsterSmall, model]);
+  }, [giantSpider, layers.catPaw, layers.facewall, layers.spiderMonsterLarge, layers.spiderMonsterSmall, model, pawPivot]);
   const activeClip = useRef<string | null>(null);
   const elapsedMotion = useRef(0);
   const motionPhase = useRef({ moving: true, remaining: 6 });
@@ -335,6 +341,8 @@ function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
   }, [actions, mixer, giantMixer]);
 
   useFrame((_, delta) => {
+    // One revolution in ten minutes, independent of frame rate.
+    if (pawPivot && layers.catPaw) pawPivot.rotation.y += Math.min(delta, 0.1) * (Math.PI * 2 / 600);
     faceTime.current.value += delta;
     // Translate bones and skin together through an unanimated parent. Moving
     // only an attached SkinnedMesh is cancelled by its inverse bind matrix.
@@ -427,6 +435,103 @@ function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
   );
 }
 
+function posedMeshBounds(object: Object3D) {
+  object.updateWorldMatrix(true, true);
+  const bounds = new Box3();
+  const vertex = new Vector3();
+  object.traverse(child => {
+    if (!(child instanceof Mesh)) return;
+    if ("skeleton" in child) (child as Mesh & { skeleton: { update(): void } }).skeleton.update();
+    const positions = child.geometry.getAttribute("position");
+    for (let i = 0; i < positions.count; i++) {
+      child.getVertexPosition(i, vertex).applyMatrix4(child.matrixWorld);
+      bounds.expandByPoint(vertex);
+    }
+  });
+  return bounds;
+}
+
+function Odette({ visible }: { visible: boolean }) {
+  const { scene, animations } = useGLTF("/world/odette-updated.glb");
+  const balletData = useLoader(FileLoader, "/world/odette-ballet-pose.json");
+  const odetteAnimations = useMemo(() => [
+    ...animations.filter(clip => clip.name !== "BalletPose"),
+    AnimationClip.parse(JSON.parse(balletData as string)),
+  ], [animations, balletData]);
+  const fittedRoot = useRef<Group>(null);
+  const fitFrames = useRef(0);
+  const root = useRef<Group>(null);
+  const model = useMemo(() => cloneSkeleton(scene), [scene]);
+  const { actions } = useAnimations(odetteAnimations, root);
+  useEffect(() => { fitFrames.current = 0; }, [model]);
+  useFrame(({ scene: renderedScene }) => {
+    if (fitFrames.current >= 3 || !visible || !root.current || !fittedRoot.current) return;
+    const spider = renderedScene.getObjectByName("SpiderLocomotion");
+    if (!spider || !actions.BalletPose?.isRunning()) return;
+    if (++fitFrames.current < 3) return;
+    // Both animation mixers must run first: the spider's animated rig scale
+    // differs substantially from its imported/rest-pose scale.
+    const group = fittedRoot.current;
+    const bounds = posedMeshBounds(group);
+    const targetHeight = posedMeshBounds(spider).getSize(new Vector3()).y * 0.5;
+    const height = bounds.getSize(new Vector3()).y;
+    if (height <= 0 || targetHeight <= 0) { fitFrames.current = 0; return; }
+    const center = bounds.getCenter(new Vector3());
+    root.current.position.x -= (center.x - group.position.x) / group.scale.x;
+    root.current.position.y -= (bounds.min.y - group.position.y) / group.scale.y;
+    root.current.position.z -= (center.z - group.position.z) / group.scale.z;
+    group.scale.multiplyScalar(targetHeight / height);
+  });
+  useEffect(() => {
+    const originals: { mesh: Mesh; material: Mesh["material"]; geometry: Mesh["geometry"] }[] = [];
+    const cards: MeshStandardMaterial[] = [];
+    model.traverse(object => {
+      if (!(object instanceof Mesh)) return;
+      const source = Array.isArray(object.material) ? object.material : [object.material];
+      originals.push({ mesh: object, material: object.material, geometry: object.geometry });
+      object.geometry = object.geometry.clone();
+      object.geometry.deleteAttribute("color");
+      const materials = source.map(material => {
+        const card = (material as MeshStandardMaterial).clone();
+        card.vertexColors = false;
+        cards.push(card);
+        if (!/card/i.test(material.name)) return card;
+        // Source TGA files are RGB-only: their black background is the mask.
+        // Three's alphaMap reads the green channel, retaining fine feather edges.
+        card.alphaMap = card.map;
+        card.transparent = true;
+        card.opacity = 1;
+        card.alphaTest = 0.04;
+        card.depthWrite = false;
+        card.needsUpdate = true;
+        return card;
+      });
+      object.material = Array.isArray(object.material) ? materials : materials[0];
+    });
+    return () => {
+      originals.forEach(({ mesh, material, geometry }) => {
+        mesh.geometry.dispose();
+        mesh.geometry = geometry;
+        mesh.material = material;
+      });
+      cards.forEach(material => material.dispose());
+    };
+  }, [model]);
+  useEffect(() => {
+    const action = actions.BalletPose;
+    if (visible) action?.reset().setLoop(LoopPingPong, Infinity).setEffectiveTimeScale(0.5).play();
+    else action?.stop();
+    return () => { action?.stop(); };
+  }, [actions, visible]);
+  return (
+    <group ref={fittedRoot} name="Odette" position={[0.6930399616281196, -2.381782129851877, 2.373668806188772]} visible={visible}>
+      <group ref={root}>
+        <primitive object={model} />
+      </group>
+    </group>
+  );
+}
+
 function LoadingWorld() {
   return (
     <Html center>
@@ -447,15 +552,26 @@ function WorldCamera({ request }: { request: { pov: number; version: number } })
       camera.zoom = 1;
       camera.updateProjectionMatrix();
     } else if (request.pov === 2) {
-      // User-selected Small spider viewpoint, captured from the live camera.
-      camera.position.set(0.6990534423785402, -0.03825398427754906, -0.4020570927278324);
-      orbit.target.set(0.40021822881351005, -0.06107653028778544, -0.1865107849862691);
+      // User-selected Spider Monster viewpoint, captured from the live camera.
+      camera.position.set(-1.7719903806900124, 1.2520425087027607, 1.3263211437988018);
+      orbit.target.set(-0.17347866257697642, 0.430586064779247, -0.22626833271275615);
       camera.zoom = 1;
       camera.updateProjectionMatrix();
-    } else {
+    } else if (request.pov === 3) {
       // User-selected overview, captured from the live camera.
       camera.position.set(-8.588372058268389, -1.7557372182655067, 2.692974586015878);
       orbit.target.set(0.3960389748938056, -0.024179676722058785, -0.026203657044800543);
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+    } else if (request.pov === 4) {
+      // User-selected favorite, captured from the live camera.
+      camera.position.set(-0.24535168691468484, -7.357347774059101, -0.8209358854256706);
+      orbit.target.set(-0.37324021209113134, -0.04185536869883144, -0.22578324433252894);
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+    } else if (request.pov === 5) {
+      camera.position.set(0.7020491346703999, -2.2831084160561996, 2.5060931540570266);
+      orbit.target.set(0.46871659829601964, -2.7732716013880214, 0.050006316843287824);
       camera.zoom = 1;
       camera.updateProjectionMatrix();
     }
@@ -467,18 +583,25 @@ function WorldCamera({ request }: { request: { pov: number; version: number } })
     applied.current = request.version;
   });
   return <OrbitControls ref={controls} autoRotate={request.version === 0}
+    rotateSpeed={request.pov === 5 ? 0.125 : 1}
+    zoomSpeed={request.pov === 5 ? 0.1 : 1}
+    panSpeed={request.pov === 5 ? 0.125 : 1}
+    mouseButtons={{ LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.PAN }}
     autoRotateSpeed={(Math.hypot(42, 24) / 40) * WORLD_SCALE * 0.1 * 60 / (2 * Math.PI) * 1.2}
-    enablePan={false} minDistance={0.01} maxDistance={200} zoomToCursor />;
+    enablePan screenSpacePanning minDistance={0.01} maxDistance={200} zoomToCursor />;
 }
 
 export function WorldViewer() {
   const [viewRequest, setViewRequest] = useState({ pov: 1, version: 0 });
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [layersOpen, setLayersOpen] = useState(true);
+  const [viewpointsOpen, setViewpointsOpen] = useState(true);
   const [layers, setLayers] = useState<WorldLayers>({
     facewall: true,
     spiderMonsterSmall: true,
     spiderMonsterLarge: true,
     catPaw: true,
+    odette: true,
   });
   const dismissGuide = () => setHasInteracted(true);
   const toggleLayer = (layer: WorldLayer) => {
@@ -489,6 +612,7 @@ export function WorldViewer() {
     { id: "spiderMonsterSmall", label: "Spider Monster 1" },
     { id: "spiderMonsterLarge", label: "Spider Monster 2" },
     { id: "catPaw", label: "Cat Paw" },
+    { id: "odette", label: "Odette" },
   ];
 
   return (
@@ -500,7 +624,7 @@ export function WorldViewer() {
       onWheel={dismissGuide}
     >
       <Canvas
-        camera={{ fov: 46, near: 0.01, far: 200, position: [-0.09450368318859186, -1.0076274064877306, -0.01692057046542648] }}
+        camera={{ fov: 46, near: 0.001, far: 200, position: [-0.09450368318859186, -1.0076274064877306, -0.01692057046542648] }}
         dpr={[1, 1.5]}
       >
         <color attach="background" args={["#07152d"]} />
@@ -515,12 +639,18 @@ export function WorldViewer() {
         <Suspense fallback={<LoadingWorld />}>
           <CatPawWorldModel layers={layers} />
         </Suspense>
+        <Suspense fallback={null}>
+          <Odette visible={layers.odette} />
+        </Suspense>
         <WorldCamera request={viewRequest} />
       </Canvas>
       <span className="world-scanlines" aria-hidden="true" />
       <section className="world-layer-controls" aria-label="World visibility layers">
-        <p>LAYERS</p>
-        {layerItems.map(({ id, label }) => {
+        <button type="button" className="world-panel-heading" aria-expanded={layersOpen}
+          onClick={() => setLayersOpen(open => !open)}>
+          <span aria-hidden="true">{layersOpen ? "−" : "+"}</span> LAYERS
+        </button>
+        {layersOpen && layerItems.map(({ id, label }) => {
           const visible = layers[id];
           return (
             <button
@@ -536,8 +666,11 @@ export function WorldViewer() {
           );
         })}
         <div className="world-pov-controls" aria-label="Camera viewpoints">
-          <p>VIEWPOINTS</p>
-          {[[1, "Initial view"], [2, "Small spider"], [3, "Front / All meshes"]].map(([pov, label]) => (
+          <button type="button" className="world-panel-heading" aria-expanded={viewpointsOpen}
+            onClick={() => setViewpointsOpen(open => !open)}>
+            <span aria-hidden="true">{viewpointsOpen ? "−" : "+"}</span> VIEWPOINTS
+          </button>
+          {viewpointsOpen && [[1, "Initial view"], [2, "Spider Monster"], [3, "Front / All meshes"], [4, "My Favorite"], [5, "Odette"]].map(([pov, label]) => (
             <button key={pov} type="button" aria-pressed={viewRequest.pov === pov}
               onClick={() => {
                 if (pov === 2) setLayers(current => ({ ...current, spiderMonsterSmall: true }));

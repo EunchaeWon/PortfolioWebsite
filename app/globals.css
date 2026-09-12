@@ -2241,7 +2241,7 @@ footer {
   min-width: 9.6rem;
   padding: 0.38rem;
   border: 1px solid rgba(166, 255, 246, 0.5);
-  background: rgba(3, 16, 38, 0.68);
+  background: rgba(3, 16, 38, 0.3);
   box-shadow: 0 0 14px rgba(44, 235, 216, 0.18);
   backdrop-filter: blur(3px);
   font-family: "VT323", "Lucida Console", monospace;
@@ -2269,6 +2269,26 @@ footer {
 .world-layer-toggle.is-hidden { color: rgba(207, 233, 244, 0.48); }
 .world-pov-controls { display: grid; gap: 4px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(166,255,246,.35); }
 .world-pov-controls p { margin: 0 0 4px; color: #9efff2; font-size: .9rem; letter-spacing: .12em; }
+.world-layer-controls .world-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin: 0;
+  padding: 4px 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #9efff2;
+  font: inherit;
+  font-size: .9rem;
+  letter-spacing: .12em;
+  text-align: left;
+  cursor: pointer;
+}
+.world-layer-controls .world-panel-heading:focus-visible {
+  outline: 1px solid #64ffe8;
+  outline-offset: 2px;
+}
 .world-pov-controls button { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 5px 7px; border: 1px solid transparent; background: transparent; color: #e4ffff; font: inherit; text-align: left; cursor: pointer; }
 .world-pov-controls button span { font-size: .95rem; }
 .world-pov-controls button:hover, .world-pov-controls button:focus-visible, .world-pov-controls button[aria-pressed="true"] { border-color: #64ffe8; background: rgba(54,224,213,.18); }
