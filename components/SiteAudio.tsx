@@ -4,12 +4,28 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const STORAGE_KEY = "eunchae-portfolio-sound";
 type SiteAudioTheme = "main" | "projects" | "world";
 
 class SiteAudioEngine {
+  private cassetteHoverBlocked = false;
+  private cassetteHoverSources = new Set<AudioScheduledSourceNode>();
+
+  setCassetteHoverBlocked(blocked: boolean) {
+    this.cassetteHoverBlocked = blocked;
+    if (blocked) this.stopCassetteHoverSound();
+  }
+
+  stopCassetteHoverSound() {
+      for (const source of this.cassetteHoverSources) {
+        source.stop();
+        source.disconnect();
+      }
+      this.cassetteHoverSources.clear();
+  }
   private cassetteBuffer: AudioBuffer | null = null;
   private cassetteLoading: Promise<void> | null = null;
+  private cassetteHoverBuffer: AudioBuffer | null = null;
+  private cassetteHoverLoading: Promise<void> | null = null;
 
   preloadCassette() {
     if (this.cassetteLoading) return this.cassetteLoading;
@@ -25,11 +41,27 @@ class SiteAudioEngine {
       .catch(() => { this.cassetteLoading = null; });
     return this.cassetteLoading;
   }
+
+  preloadCassetteHover() {
+    if (this.cassetteHoverLoading) return this.cassetteHoverLoading;
+    const context = this.getContext();
+    if (!context) return Promise.resolve();
+    this.cassetteHoverLoading = fetch("/sounds/cassette-hover-writing.wav")
+      .then((response) => {
+        if (!response.ok) throw new Error("Cassette hover sound unavailable");
+        return response.arrayBuffer();
+      })
+      .then((bytes) => context.decodeAudioData(bytes))
+      .then((buffer) => { if (!this.disposed) this.cassetteHoverBuffer = buffer; })
+      .catch(() => { this.cassetteHoverLoading = null; });
+    return this.cassetteHoverLoading;
+  }
   private effects = new Set<AudioNode[]>();
 
   private retainEffect(source: AudioScheduledSourceNode, nodes: AudioNode[]) {
     this.effects.add(nodes);
     source.onended = () => {
+      this.cassetteHoverSources.delete(source);
       for (const node of nodes) node.disconnect();
       this.effects.delete(nodes);
       source.onended = null;
@@ -333,7 +365,7 @@ class SiteAudioEngine {
     const context = this.context;
     if (!context) return;
     const levels = {
-      main: [0.0136, 0, 0],
+      main: [0.00068, 0, 0],
       projects: [0, 0.016, 0],
       world: [0, 0, 0.052],
     }[this.theme];
@@ -461,8 +493,7 @@ class SiteAudioEngine {
 
   playHover(kind: "standard" | "cassette" | "video") {
     if (kind === "cassette") {
-      this.noise(0.018, 0.055, 0, 850);
-      this.tone(130, 0.018, 0.026, "triangle", 0, 75);
+      // The title event plays the single writing recording.
       return;
     }
 
@@ -474,6 +505,27 @@ class SiteAudioEngine {
 
     this.tone(140, 0.018, 0.03, "triangle", 0, 76);
     this.noise(0.012, 0.0264, 0, 900);
+  }
+
+  private playCassetteHover(length: number, shortenBy = 0) {
+    if (this.cassetteHoverBlocked || !this.cassetteHoverBuffer) return;
+    const context = this.context;
+    const master = this.master;
+    if (!context || !master || !this.running) return;
+    // Keep one unprocessed recording, starting at the original beginning.
+    for (const active of this.cassetteHoverSources) {
+      active.stop();
+      active.disconnect();
+    }
+    this.cassetteHoverSources.clear();
+    const source = context.createBufferSource();
+    source.buffer = this.cassetteHoverBuffer;
+    source.playbackRate.value = 1;
+    source.connect(master);
+    this.retainEffect(source, [source]);
+    this.cassetteHoverSources.add(source);
+    const duration = Math.max(0.1, Math.min(Math.max(0.8, Math.min(length * 0.095, 2.4)) + 0.5, source.buffer.duration) - shortenBy);
+    source.start(context.currentTime, 0, duration);
   }
 
   playSwitch(turningOn: boolean) {
@@ -514,6 +566,10 @@ class SiteAudioEngine {
         elapsed: () => Math.max(0, context.currentTime - start),
       },
     }));
+  }
+
+  playCassetteTitleWriting(length: number, shortenBy = 0) {
+    this.playCassetteHover(length, shortenBy);
   }
 
   playTapeStart() {
@@ -581,16 +637,10 @@ export function SiteAudio() {
   }, [pathname]);
 
   useEffect(() => {
-    let savedPreference: string | null = null;
-    try { savedPreference = window.localStorage.getItem(STORAGE_KEY); } catch { /* Storage may be blocked. */ }
-    if (savedPreference === "off") {
-      enabledRef.current = false;
-      setEnabled(false);
-    }
-
     const engine = engineRef.current;
     if (engine) {
       void engine.preloadCassette();
+      void engine.preloadCassetteHover();
       engine.onStateChange = (running) => {
         startedRef.current = running;
         setStarted(running);
@@ -665,6 +715,7 @@ export function SiteAudio() {
     };
 
     const handleCassette = () => {
+      engine?.setCassetteHoverBlocked(true);
       if (!enabledRef.current || !engine) return;
       // Already unlocked: schedule the original click in this same event,
       // without waiting for resume or fading over the short click transient.
@@ -679,13 +730,26 @@ export function SiteAudio() {
         engine.playCassetteInsert();
       });
     };
+    const handleCassetteTitleTyping = (event: Event) => {
+      if (!enabledRef.current || !engine?.running) return;
+      const detail = (event as CustomEvent<{ length?: number; shortenBy?: number }>).detail;
+      engine.playCassetteTitleWriting(detail?.length ?? 10, detail?.shortenBy ?? 0);
+    };
+    const handleCassetteClose = () => engine?.setCassetteHoverBlocked(false);
+    const handleCassetteHoverEnd = () => engine?.stopCassetteHoverSound();
+    document.addEventListener("portfolio:cassette-hover-end", handleCassetteHoverEnd);
+    document.addEventListener("portfolio:cassette-close", handleCassetteClose);
     document.addEventListener("portfolio:cassette-insert", handleCassette);
+    document.addEventListener("portfolio:cassette-title-type", handleCassetteTitleTyping);
     document.addEventListener("pointerdown", handlePointer, true);
     document.addEventListener("pointerover", handleHover, true);
     document.addEventListener("pointerout", handleHoverEnd, true);
     document.addEventListener("keydown", handleKey, true);
     return () => {
+      document.removeEventListener("portfolio:cassette-close", handleCassetteClose);
+      document.removeEventListener("portfolio:cassette-hover-end", handleCassetteHoverEnd);
       document.removeEventListener("portfolio:cassette-insert", handleCassette);
+      document.removeEventListener("portfolio:cassette-title-type", handleCassetteTitleTyping);
       document.removeEventListener("pointerdown", handlePointer, true);
       document.removeEventListener("pointerover", handleHover, true);
       document.removeEventListener("pointerout", handleHoverEnd, true);
@@ -704,7 +768,7 @@ export function SiteAudio() {
     if (!engine) return;
     const version = ++toggleVersion.current;
     if (muteTimer.current) clearTimeout(muteTimer.current);
-    const nextEnabled = !(enabledRef.current && engine.running);
+    const nextEnabled = !enabledRef.current;
     enabledRef.current = nextEnabled;
     setEnabled(nextEnabled);
     if (nextEnabled) {
@@ -728,22 +792,22 @@ export function SiteAudio() {
         if (version === toggleVersion.current) engine.setEnabled(false);
       }, 105);
     }
-    try { window.localStorage.setItem(STORAGE_KEY, nextEnabled ? "on" : "off"); } catch { /* Sound works without storage. */ }
   };
 
   return (
     <button
       className="site-sound-toggle"
       type="button"
-      data-enabled={enabled && started}
+      data-enabled={enabled}
       data-compact={inAbout || pathname.startsWith("/world") || pathname.startsWith("/projects")}
-      aria-pressed={enabled && started}
-      aria-label={enabled && !started ? "Start site sound" : `Turn site sound ${enabled ? "off" : "on"}`}
+      aria-pressed={enabled}
+      aria-label={`Turn site sound ${enabled ? "off" : "on"}`}
+      title={enabled && !started ? "Sound is on. Click the page to start playback." : undefined}
       onClick={toggleSound}
     >
       <span className="site-sound-switch" aria-hidden="true">
         <Image
-          src={enabled && started ? "/ui/sound-switch-on-v2.png" : "/ui/sound-switch-off-v2.png"}
+          src={enabled ? "/ui/sound-switch-on-v2.png" : "/ui/sound-switch-off-v2.png"}
           alt=""
           width={273}
           height={401}
@@ -751,7 +815,7 @@ export function SiteAudio() {
         />
       </span>
       <span className="site-sound-label">
-        {enabled && !started ? "Start sound" : `Sound ${enabled ? "on" : "off"}`}
+        {`Sound ${enabled ? "on" : "off"}`}
       </span>
     </button>
   );

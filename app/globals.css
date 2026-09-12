@@ -621,7 +621,8 @@ button, summary { color: inherit; font: inherit; }
   width: 100%;
   height: 100%;
   z-index: 4;
-  background: url("/textures/monitor-play-static.png") center / 100% 100% no-repeat;
+  /* Frame the screen inside the supplied image's black outer margins. */
+  background: url("/textures/monitor-play-user.png") 38% 50% / 194% 124% no-repeat;
   opacity: 0;
   pointer-events: none;
 }
@@ -1907,7 +1908,41 @@ button, summary { color: inherit; font: inherit; }
   opacity: 0.48;
   transform: translateX(54%) rotate(43deg);
 }
-.cassette-library { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: center; gap: clamp(0.35rem, 1.25svh, 1rem) clamp(0.5rem, 1.6vw, 1.5rem); width: min(100%, 90svh, 1200px); height: 100%; min-height: 0; margin-inline: auto; }
+.cassette-library { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: center; gap: clamp(0.35rem, 1.25svh, 1rem) clamp(0.5rem, 1.6vw, 1.5rem); width: min(100%, 90svh, 1200px); height: calc(100% - clamp(6rem, 12svh, 7.5rem)); min-height: 0; margin-inline: auto; }
+.cassette-hover-title {
+  position: absolute;
+  right: 5vw;
+  bottom: clamp(0.5rem, 1.15svh, 1rem);
+  left: 5vw;
+  z-index: 3;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: #42baff;
+  font-family: "VT323", "Lucida Console", monospace;
+  font-size: clamp(1.25rem, 2.4vw, 2.3rem);
+  line-height: 0.9;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 0 3px #cbf7ff, 0 0 8px #138dff, 0 0 16px rgba(40, 119, 255, 0.92);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
+}
+.cassette-hover-title.is-visible { opacity: 1; transform: translateY(0); }
+.cassette-hover-title-image {
+  display: block;
+  width: min(90vw, 1080px);
+  height: auto;
+  max-height: 4.8rem;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(67%) sepia(83%) saturate(1635%) hue-rotate(169deg) brightness(103%) contrast(104%) drop-shadow(0 0 3px #cbf7ff) drop-shadow(0 0 8px #138dff);
+  clip-path: inset(0 100% 0 0);
+  animation: cassette-title-type 720ms steps(14, end) both;
+}
+.cassette-hover-title-image--featured { width: min(90vw, 1404px); max-height: 6.24rem; }
+@keyframes cassette-title-type { to { clip-path: inset(0 0 0 0); } }
 .project-cassette { display: block; min-width: 0; color: #2f2726; perspective: 900px; }
 .cassette-case {
   position: relative;
@@ -2196,6 +2231,48 @@ footer {
 .world-viewer canvas { display: block; width: 100% !important; height: 100% !important; touch-action: none; }
 .world-loading { display: block; padding: 0.5rem 0.7rem; border: 1px solid var(--acid); background: #07152d; color: var(--acid); font-family: "Courier New", monospace; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; }
 .world-scanlines { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(57, 255, 222, 0.055) 4px 5px); }
+.world-layer-controls {
+  position: absolute;
+  top: calc(clamp(4.8rem, 9vw, 6.5rem) + clamp(3rem, 4vw, 4rem) + 40px);
+  left: clamp(1rem, 2.5vw, 2rem);
+  z-index: 4;
+  display: grid;
+  gap: 0.18rem;
+  min-width: 9.6rem;
+  padding: 0.38rem;
+  border: 1px solid rgba(166, 255, 246, 0.5);
+  background: rgba(3, 16, 38, 0.68);
+  box-shadow: 0 0 14px rgba(44, 235, 216, 0.18);
+  backdrop-filter: blur(3px);
+  font-family: "VT323", "Lucida Console", monospace;
+}
+.world-layer-controls > p { margin: 0 0 0.08rem; color: #9efff2; font-size: 0.9rem; letter-spacing: 0.12em; }
+.world-layer-toggle {
+  display: grid;
+  grid-template-columns: 1.35rem 1fr;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 0.18rem 0.28rem;
+  border: 0;
+  background: transparent;
+  color: #e4ffff;
+  font: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.055em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.world-layer-toggle:hover, .world-layer-toggle:focus-visible { outline: 1px solid #64ffe8; background: rgba(54, 224, 213, 0.18); }
+.world-layer-eye { display: grid; place-items: center; color: #62ffe7; font-family: system-ui, sans-serif; font-size: 0.8rem; line-height: 1; filter: drop-shadow(0 0 4px rgba(67, 255, 230, 0.95)); }
+.world-layer-toggle.is-hidden { color: rgba(207, 233, 244, 0.48); }
+.world-pov-controls { display: grid; gap: 4px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(166,255,246,.35); }
+.world-pov-controls p { margin: 0 0 4px; color: #9efff2; font-size: .9rem; letter-spacing: .12em; }
+.world-pov-controls button { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 5px 7px; border: 1px solid transparent; background: transparent; color: #e4ffff; font: inherit; text-align: left; cursor: pointer; }
+.world-pov-controls button span { font-size: .95rem; }
+.world-pov-controls button:hover, .world-pov-controls button:focus-visible, .world-pov-controls button[aria-pressed="true"] { border-color: #64ffe8; background: rgba(54,224,213,.18); }
+.world-layer-toggle.is-hidden .world-layer-eye { color: rgba(194, 225, 237, 0.48); filter: none; }
 .world-controls-guide {
   position: absolute;
   bottom: clamp(2rem, 7vh, 5rem);

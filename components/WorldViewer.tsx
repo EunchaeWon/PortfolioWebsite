@@ -6,6 +6,8 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Box3, Group, LoopRepeat, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3 } from "three";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { AnimationClip, AnimationMixer, FileLoader } from "three";
+import { PerspectiveCamera } from "three";
+import type { ComponentRef } from "react";
 
 const WORLD_MODEL_URL = "/world/cat-paw-world-web-production.glb?v=20260908-web-production";
 const DRACO_DECODER_PATH = "/draco/";
@@ -23,6 +25,8 @@ const SPIDER_PAW_ROUTE = [
 ];
 
 type SpiderMode = "walk" | "twitch";
+type WorldLayer = "facewall" | "spiderMonsterSmall" | "spiderMonsterLarge" | "catPaw";
+type WorldLayers = Record<WorldLayer, boolean>;
 
 // Retained only as an import recipe for a later deliberate re-add; it is not
 // mounted or preloaded in Cat Paw World.
@@ -229,7 +233,7 @@ function FacesWall({
   );
 }
 
-function CatPawWorldModel() {
+function CatPawWorldModel({ layers }: { layers: WorldLayers }) {
   const { scene } = useGLTF(WORLD_MODEL_URL, DRACO_DECODER_PATH);
   const clipData = useLoader(FileLoader, "/world/spider-clips.json");
   const animations = useMemo(() => (JSON.parse(clipData as string) as Parameters<typeof AnimationClip.parse>[0][]).map(clip => AnimationClip.parse(clip)), [clipData]);
@@ -303,6 +307,18 @@ function CatPawWorldModel() {
       materials.forEach(material => material.dispose());
     };
   }, [model]);
+  useEffect(() => {
+    const faceWall = model.getObjectByName("FemaleHead_low");
+    if (faceWall) faceWall.visible = layers.facewall;
+
+    model.children.forEach((object) => {
+      if (object.name.startsWith("PM3D_")) object.visible = layers.catPaw;
+    });
+
+    const smallSpider = model.getObjectByName("Armature");
+    if (smallSpider) smallSpider.visible = layers.spiderMonsterSmall;
+    giantSpider.visible = layers.spiderMonsterLarge;
+  }, [giantSpider, layers.catPaw, layers.facewall, layers.spiderMonsterLarge, layers.spiderMonsterSmall, model]);
   const activeClip = useRef<string | null>(null);
   const elapsedMotion = useRef(0);
   const motionPhase = useRef({ moving: true, remaining: 6 });
@@ -402,7 +418,7 @@ function CatPawWorldModel() {
   return (
     // Keep Blender's native origin: this makes the camera's orbit target and
     // the scene's (0, 0, 0) exactly the same point.
-    <group scale={WORLD_SCALE}>
+    <group name="PovWorldRoot" scale={WORLD_SCALE}>
       <group ref={worldRoot}>
         <primitive object={model} />
         <primitive object={giantSpider} />
@@ -419,9 +435,61 @@ function LoadingWorld() {
   );
 }
 
+function WorldCamera({ request }: { request: { pov: number; version: number } }) {
+  const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const applied = useRef(-1);
+  useFrame(({ camera }) => {
+    if (!controls.current || applied.current === request.version || !(camera instanceof PerspectiveCamera)) return;
+    const orbit = controls.current;
+    if (request.pov === 1) {
+      camera.position.set(-0.09450368318859186, -1.0076274064877306, -0.01692057046542648);
+      orbit.target.set(-0.09450379257416601, -0.01459693722918709, -0.01691958298995035);
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+    } else if (request.pov === 2) {
+      // User-selected Small spider viewpoint, captured from the live camera.
+      camera.position.set(0.6990534423785402, -0.03825398427754906, -0.4020570927278324);
+      orbit.target.set(0.40021822881351005, -0.06107653028778544, -0.1865107849862691);
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+    } else {
+      // User-selected overview, captured from the live camera.
+      camera.position.set(-8.588372058268389, -1.7557372182655067, 2.692974586015878);
+      orbit.target.set(0.3960389748938056, -0.024179676722058785, -0.026203657044800543);
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+    }
+    // Clear accumulated damping before applying an exact preset.
+    const damping = orbit.enableDamping;
+    orbit.enableDamping = false;
+    orbit.update();
+    orbit.enableDamping = damping;
+    applied.current = request.version;
+  });
+  return <OrbitControls ref={controls} autoRotate={request.version === 0}
+    autoRotateSpeed={(Math.hypot(42, 24) / 40) * WORLD_SCALE * 0.1 * 60 / (2 * Math.PI) * 1.2}
+    enablePan={false} minDistance={0.01} maxDistance={200} zoomToCursor />;
+}
+
 export function WorldViewer() {
+  const [viewRequest, setViewRequest] = useState({ pov: 1, version: 0 });
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [layers, setLayers] = useState<WorldLayers>({
+    facewall: true,
+    spiderMonsterSmall: true,
+    spiderMonsterLarge: true,
+    catPaw: true,
+  });
   const dismissGuide = () => setHasInteracted(true);
+  const toggleLayer = (layer: WorldLayer) => {
+    setLayers((current) => ({ ...current, [layer]: !current[layer] }));
+  };
+  const layerItems: { id: WorldLayer; label: string }[] = [
+    { id: "facewall", label: "Facewall" },
+    { id: "spiderMonsterSmall", label: "Spider Monster 1" },
+    { id: "spiderMonsterLarge", label: "Spider Monster 2" },
+    { id: "catPaw", label: "Cat Paw" },
+  ];
 
   return (
     <div
@@ -432,7 +500,7 @@ export function WorldViewer() {
       onWheel={dismissGuide}
     >
       <Canvas
-        camera={{ fov: 46, near: 0.01, far: 200, position: [0.028895, -0.093691, -0.011751] }}
+        camera={{ fov: 46, near: 0.01, far: 200, position: [-0.09450368318859186, -1.0076274064877306, -0.01692057046542648] }}
         dpr={[1, 1.5]}
       >
         <color attach="background" args={["#07152d"]} />
@@ -445,21 +513,41 @@ export function WorldViewer() {
         <pointLight position={[-4, 5, -5]} intensity={38} color="#32a8ff" distance={19} decay={1.65} />
         <pointLight position={[5, 4, -4]} intensity={32} color="#ffea38" distance={17} decay={1.7} />
         <Suspense fallback={<LoadingWorld />}>
-          <CatPawWorldModel />
+          <CatPawWorldModel layers={layers} />
         </Suspense>
-        <OrbitControls
-          autoRotate
-          // Convert 0.1 times the first leg's rendered units/second to
-          // radians/second (one-unit radius), then to OrbitControls units.
-          autoRotateSpeed={(Math.hypot(42, 24) / 40) * WORLD_SCALE * 0.1 * 60 / (2 * Math.PI) * 1.2}
-          enablePan={false}
-          minDistance={0.01}
-          maxDistance={32}
-          target={[0, 0, 0]}
-          zoomToCursor
-        />
+        <WorldCamera request={viewRequest} />
       </Canvas>
       <span className="world-scanlines" aria-hidden="true" />
+      <section className="world-layer-controls" aria-label="World visibility layers">
+        <p>LAYERS</p>
+        {layerItems.map(({ id, label }) => {
+          const visible = layers[id];
+          return (
+            <button
+              key={id}
+              type="button"
+              className={`world-layer-toggle${visible ? " is-visible" : " is-hidden"}`}
+              aria-pressed={visible}
+              onClick={() => toggleLayer(id)}
+            >
+              <span className="world-layer-eye" aria-hidden="true">{visible ? "👁" : "◡"}</span>
+              <span>{label}</span>
+            </button>
+          );
+        })}
+        <div className="world-pov-controls" aria-label="Camera viewpoints">
+          <p>VIEWPOINTS</p>
+          {[[1, "Initial view"], [2, "Small spider"], [3, "Front / All meshes"]].map(([pov, label]) => (
+            <button key={pov} type="button" aria-pressed={viewRequest.pov === pov}
+              onClick={() => {
+                if (pov === 2) setLayers(current => ({ ...current, spiderMonsterSmall: true }));
+                setViewRequest(current => ({ pov: Number(pov), version: current.version + 1 }));
+              }}>
+              <strong>POV {pov}.</strong><span>{label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
       <div
         className={`world-controls-guide${hasInteracted ? " is-hidden" : ""}`}
         aria-hidden={hasInteracted}

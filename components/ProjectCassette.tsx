@@ -4,8 +4,8 @@ import Image from "next/image";
 import type { MouseEvent } from "react";
 import type { Project } from "@/data/projects";
 
-export function ProjectCassette({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
-  const cassetteTitleImage = {
+export function getCassetteTitleImage(project: Project) {
+  return {
     "nowhere-now-here": "/projects/nowhere-now-here-cassette-title.png",
     "swan-in-lake": "/projects/swan-in-lake-cassette-title.png",
     "faces-within-the-wheel": "/projects/faces-within-the-wheel-cassette-title.png",
@@ -13,6 +13,16 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
     cycle: "/projects/cycle-cassette-title.png",
     "hopeless-butterfly": "/projects/hopeless-butterfly-cassette-title.png",
   }[project.slug];
+}
+
+export function ProjectCassette({ project, index, onOpen, onHover, onLeave }: {
+  project: Project;
+  index: number;
+  onOpen: () => void;
+  onHover: () => void;
+  onLeave: () => void;
+}) {
+  const cassetteTitleImage = getCassetteTitleImage(project);
 
   const openProject = () => {
     onOpen();
@@ -121,6 +131,10 @@ export function ProjectCassette({ project, index, onOpen }: { project: Project; 
       aria-label={`Open ${project.title} project`}
       data-no-photo-cat
       onClick={handleClick}
+      onPointerEnter={onHover}
+      onPointerLeave={onLeave}
+      onFocus={onHover}
+      onBlur={onLeave}
     >
       <span className="cassette-case">
         <Image
