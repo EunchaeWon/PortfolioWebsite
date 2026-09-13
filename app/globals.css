@@ -2400,9 +2400,9 @@ body:has(.hero) .floating-character-world { opacity: 0.92; }
 .floating-green-screen-cat video {
   filter: drop-shadow(0 0 7px rgba(57, 255, 222, 0.62)) drop-shadow(3px 4px 0 rgba(36, 29, 24, 0.42));
 }
-.floating-character.is-roaming.floating-banana-cat { z-index: 2; opacity: 0.94; }
-.floating-banana-cat img {
-  filter: drop-shadow(0 0 7px rgba(255, 234, 56, 0.64)) drop-shadow(3px 4px 0 rgba(36, 29, 24, 0.42));
+.floating-character.is-roaming.floating-grape-cat { z-index: 2; opacity: 0.94; }
+.floating-grape-cat img {
+  filter: drop-shadow(0 0 7px rgba(255, 89, 168, 0.58)) drop-shadow(3px 4px 0 rgba(36, 29, 24, 0.42));
 }
 .floating-character.is-roaming.floating-cat-mummy { z-index: 3; opacity: 0.96; }
 .floating-cat-mummy {
