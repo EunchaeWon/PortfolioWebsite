@@ -307,6 +307,11 @@ export function FloatingCharacters({
   const [grapeBoosted, setGrapeBoosted] = useState(false);
 
   useEffect(() => {
+    const fastImage = new window.Image();
+    fastImage.src = "/characters/grape-cat-walk-fast.gif";
+  }, []);
+
+  useEffect(() => {
     const updateCharacterScale = () => setCharacterScale(getCharacterScale());
     updateCharacterScale();
     window.addEventListener("resize", updateCharacterScale);
@@ -353,9 +358,8 @@ export function FloatingCharacters({
   }, []);
 
   const boostGrapeCat = useCallback(() => {
-    setGrapeBoosted(false);
+    setGrapeBoosted(true);
     if (grapeBoostTimer.current !== null) window.clearTimeout(grapeBoostTimer.current);
-    window.requestAnimationFrame(() => setGrapeBoosted(true));
     grapeBoostTimer.current = window.setTimeout(() => {
       setGrapeBoosted(false);
       grapeBoostTimer.current = null;
@@ -455,8 +459,12 @@ export function FloatingCharacters({
       if (!character) return;
 
       const rect = character.getBoundingClientRect();
-      const x = Math.round((rect.left + rect.width / 2) / 6) * 6;
-      const y = Math.round((rect.bottom - 4 * characterScale) / 6) * 6;
+      const parentRect = character.parentElement!.getBoundingClientRect();
+      // Transform the sprite's bottom centre, not its rotated bounding-box corner.
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(character).transform);
+      const halfHeight = character.offsetHeight / 2;
+      const x = rect.left + rect.width / 2 + matrix.c * halfHeight - parentRect.left;
+      const y = rect.top + rect.height / 2 + matrix.d * halfHeight - parentRect.top;
       const last = lastGrapeTrailPoint.current;
 
       if (last?.turnId !== grapeMotion.turnId) {
@@ -551,7 +559,7 @@ export function FloatingCharacters({
               style={{
                 width: 28 * characterScale,
                 height: 58 * characterScale,
-                transform: `translate3d(${point.x - 14 * characterScale}px, ${point.y - 4 * characterScale}px, 0) rotate(${point.rotation}deg)`,
+                transform: `translate3d(${point.x - 14 * characterScale}px, ${point.y - 29 * characterScale}px, 0) rotate(${point.rotation}deg)`,
               }}
             />
           ))}
@@ -585,6 +593,7 @@ export function FloatingCharacters({
               }
               if (isGrapeCat) {
                 boostGrapeCat();
+                moveCharacterToEdge(index);
                 return;
               }
               moveCharacterToEdge(index);
@@ -599,6 +608,7 @@ export function FloatingCharacters({
                 }
                 if (isGrapeCat) {
                   boostGrapeCat();
+                  moveCharacterToEdge(index);
                   return;
                 }
                 moveCharacterToEdge(index);
@@ -609,6 +619,7 @@ export function FloatingCharacters({
             aria-label={vanishesWhenClicked ? "Hide character" : isGrapeCat ? "Speed up grape cat" : "Move character to the edge of the screen"}
           >
             <Image
+              key={isGrapeCat ? String(grapeBoosted) : character.src}
               src={isGrapeCat && grapeBoosted ? "/characters/grape-cat-walk-fast.gif" : character.src}
               alt=""
               width={character.width}
