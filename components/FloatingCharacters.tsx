@@ -82,6 +82,9 @@ const characters = [
 ] as const;
 
 const clickVanishCharacterIndexes = new Set([1, 2]);
+const grapeCharacterIndex = characters.findIndex(
+  (character) => character.className === "floating-grape-cat",
+);
 const clickVanishDelay = 5000;
 const characterScaleViewport = 1200;
 
@@ -287,8 +290,10 @@ export function FloatingCharacters({
   const [orangePaused, setOrangePaused] = useState(false);
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const photoCatTimer = useRef<number | null>(null);
+  const grapeBoostTimer = useRef<number | null>(null);
   const reappearTimers = useRef<Map<string, number>>(new Map());
   const [characterScale, setCharacterScale] = useState(1);
+  const [grapeBoosted, setGrapeBoosted] = useState(false);
 
   useEffect(() => {
     const updateCharacterScale = () => setCharacterScale(getCharacterScale());
@@ -333,6 +338,17 @@ export function FloatingCharacters({
   useEffect(() => () => {
     reappearTimers.current.forEach((timer) => window.clearTimeout(timer));
     reappearTimers.current.clear();
+    if (grapeBoostTimer.current !== null) window.clearTimeout(grapeBoostTimer.current);
+  }, []);
+
+  const boostGrapeCat = useCallback(() => {
+    setGrapeBoosted(false);
+    if (grapeBoostTimer.current !== null) window.clearTimeout(grapeBoostTimer.current);
+    window.requestAnimationFrame(() => setGrapeBoosted(true));
+    grapeBoostTimer.current = window.setTimeout(() => {
+      setGrapeBoosted(false);
+      grapeBoostTimer.current = null;
+    }, 1000);
   }, []);
 
   const moveCharacter = useCallback((index: number) => {
@@ -477,6 +493,7 @@ export function FloatingCharacters({
     >
       {characters.map((character, index) => {
         const motion = motions[index];
+        const isGrapeCat = index === grapeCharacterIndex;
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
@@ -491,7 +508,7 @@ export function FloatingCharacters({
           <span
             ref={(node) => { characterRefs.current[index] = node; }}
             key={character.src}
-            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}${isClickHidden ? " is-click-hidden" : ""}`}
+            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}${isClickHidden ? " is-click-hidden" : ""}${isGrapeCat ? motion?.flip === -1 ? " is-facing-left" : " is-facing-right" : ""}`}
             style={style}
             onTransitionEnd={(event) => handleTransitionEnd(index, event)}
             data-no-photo-cat
@@ -499,6 +516,10 @@ export function FloatingCharacters({
               event.stopPropagation();
               if (vanishesWhenClicked) {
                 vanishCharacter(index);
+                return;
+              }
+              if (isGrapeCat) {
+                boostGrapeCat();
                 return;
               }
               moveCharacterToEdge(index);
@@ -511,15 +532,19 @@ export function FloatingCharacters({
                   vanishCharacter(index);
                   return;
                 }
+                if (isGrapeCat) {
+                  boostGrapeCat();
+                  return;
+                }
                 moveCharacterToEdge(index);
               }
             }}
             role="button"
             tabIndex={0}
-            aria-label={vanishesWhenClicked ? "Hide character" : "Move character to the edge of the screen"}
+            aria-label={vanishesWhenClicked ? "Hide character" : isGrapeCat ? "Speed up grape cat" : "Move character to the edge of the screen"}
           >
             <Image
-              src={character.src}
+              src={isGrapeCat && grapeBoosted ? "/characters/grape-cat-walk-fast.gif" : character.src}
               alt=""
               width={character.width}
               height={character.height}

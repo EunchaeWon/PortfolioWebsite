@@ -2360,6 +2360,30 @@ body:has(.hero) .floating-character-world { opacity: 0.92; }
 .floating-character img { position: relative; z-index: 1; display: block; width: 100%; height: auto; user-select: none; transition: transform 220ms ease; }
 .floating-robot img { image-rendering: pixelated; }
 .floating-character.is-roaming.floating-grape-cat { z-index: 2; opacity: 0.94; }
+.floating-grape-cat::before {
+  content: "";
+  position: absolute;
+  top: 46%;
+  z-index: 0;
+  width: 112px;
+  height: 58px;
+  background: linear-gradient(
+    to bottom,
+    #ff334f 0 16.66%,
+    #ff9a32 16.66% 33.32%,
+    #ffe85c 33.32% 49.98%,
+    #42ef87 49.98% 66.64%,
+    #43b9ff 66.64% 83.3%,
+    #a66cff 83.3% 100%
+  );
+  clip-path: polygon(0 8%, 18% 8%, 18% 0, 100% 0, 100% 92%, 82% 92%, 82% 100%, 0 100%);
+  opacity: 0.82;
+  image-rendering: pixelated;
+  filter: saturate(1.18) drop-shadow(0 0 7px rgba(68, 205, 255, 0.5));
+  pointer-events: none;
+}
+.floating-grape-cat.is-facing-right::before { right: calc(100% - 28px); }
+.floating-grape-cat.is-facing-left::before { left: calc(100% - 28px); transform: scaleX(-1); }
 .floating-grape-cat img {
   filter: drop-shadow(0 0 7px rgba(255, 89, 168, 0.58)) drop-shadow(3px 4px 0 rgba(36, 29, 24, 0.42));
 }
