@@ -486,11 +486,11 @@ export function FloatingCharacters({
 
       const rect = character.getBoundingClientRect();
       const parentRect = character.parentElement!.getBoundingClientRect();
-      // Transform the sprite's bottom centre, not its rotated bounding-box corner.
+      // Attach one ninth of the sprite height above its bottom centre.
       const matrix = new DOMMatrixReadOnly(getComputedStyle(character).transform);
-      const halfHeight = character.offsetHeight / 2;
-      const x = rect.left + rect.width / 2 + matrix.c * halfHeight - parentRect.left;
-      const y = rect.top + rect.height / 2 + matrix.d * halfHeight - parentRect.top;
+      const anchorOffsetY = character.offsetHeight * (0.5 - 1 / 9);
+      const x = rect.left + rect.width / 2 + matrix.c * anchorOffsetY - parentRect.left;
+      const y = rect.top + rect.height / 2 + matrix.d * anchorOffsetY - parentRect.top;
       const last = lastGrapeTrailPoint.current;
 
       if (last?.turnId !== grapeMotion.turnId) {
