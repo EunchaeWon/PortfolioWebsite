@@ -305,10 +305,32 @@ export function FloatingCharacters({
   const reappearTimers = useRef<Map<string, number>>(new Map());
   const [characterScale, setCharacterScale] = useState(1);
   const [grapeBoosted, setGrapeBoosted] = useState(false);
+  const [egyptPhase, setEgyptPhase] = useState(0);
+  const [egyptBoosted, setEgyptBoosted] = useState(false);
+  const egyptBoostTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (egyptBoosted) return;
+    const timer = window.setInterval(() => setEgyptPhase((phase) => (phase + 1) % 3), 5000);
+    return () => window.clearInterval(timer);
+  }, [egyptBoosted]);
+
+  const boostEgyptCat = () => {
+    setEgyptBoosted(true);
+    if (egyptBoostTimer.current !== null) window.clearTimeout(egyptBoostTimer.current);
+    egyptBoostTimer.current = window.setTimeout(() => {
+      setEgyptBoosted(false);
+      egyptBoostTimer.current = null;
+    }, 1000);
+  };
 
   useEffect(() => {
     const fastImage = new window.Image();
     fastImage.src = "/characters/grape-cat-walk-fast.gif";
+    for (const src of ["egypt-cat-new-walk.gif", "egypt-cat-new-fast.gif", "egypt-cat-last.gif"]) {
+      const image = new window.Image();
+      image.src = `/characters/${src}`;
+    }
   }, []);
 
   useEffect(() => {
@@ -355,6 +377,10 @@ export function FloatingCharacters({
     reappearTimers.current.forEach((timer) => window.clearTimeout(timer));
     reappearTimers.current.clear();
     if (grapeBoostTimer.current !== null) window.clearTimeout(grapeBoostTimer.current);
+  }, []);
+
+  useEffect(() => () => {
+    if (egyptBoostTimer.current !== null) window.clearTimeout(egyptBoostTimer.current);
   }, []);
 
   const boostGrapeCat = useCallback(() => {
@@ -567,6 +593,11 @@ export function FloatingCharacters({
       {characters.map((character, index) => {
         const motion = motions[index];
         const isGrapeCat = index === grapeCharacterIndex;
+        const isEgyptCat = character.className === "floating-egypt-cat";
+        const egyptSource = egyptBoosted ? "/characters/egypt-cat-new-fast.gif"
+          : egyptPhase === 1 ? "/characters/egypt-cat-new-walk.gif"
+          : egyptPhase === 2 ? "/characters/egypt-cat-last.gif"
+          : "/characters/egypt-cat-walk.gif";
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
@@ -597,6 +628,7 @@ export function FloatingCharacters({
                 return;
               }
               moveCharacterToEdge(index);
+              if (isEgyptCat) boostEgyptCat();
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
@@ -612,15 +644,16 @@ export function FloatingCharacters({
                   return;
                 }
                 moveCharacterToEdge(index);
+                if (isEgyptCat) boostEgyptCat();
               }
             }}
             role="button"
             tabIndex={0}
-            aria-label={vanishesWhenClicked ? "Hide character" : isGrapeCat ? "Speed up grape cat" : "Move character to the edge of the screen"}
+            aria-label={vanishesWhenClicked ? "Hide character" : isGrapeCat ? "Speed up grape cat" : isEgyptCat ? "Speed up Egyptian cat" : "Move character to the edge of the screen"}
           >
             <Image
-              key={isGrapeCat ? String(grapeBoosted) : character.src}
-              src={isGrapeCat && grapeBoosted ? "/characters/grape-cat-walk-fast.gif" : character.src}
+              key={isGrapeCat ? String(grapeBoosted) : isEgyptCat ? egyptSource : character.src}
+              src={isEgyptCat ? egyptSource : isGrapeCat && grapeBoosted ? "/characters/grape-cat-walk-fast.gif" : character.src}
               alt=""
               width={character.width}
               height={character.height}
