@@ -14,6 +14,14 @@ type Motion = {
   turnId: number;
 };
 
+type TrailPoint = {
+  id: number;
+  turnId: number;
+  x: number;
+  y: number;
+  rotation: number;
+};
+
 type AmbientSpot = {
   x: number;
   y: number;
@@ -275,6 +283,7 @@ export function FloatingCharacters({
   const [motions, setMotions] = useState<Array<Motion | null>>(
     characters.map(() => null),
   );
+  const [grapeTrail, setGrapeTrail] = useState<TrailPoint[]>([]);
   const [showPhotoCat, setShowPhotoCat] = useState(false);
   const [photoCatRun, setPhotoCatRun] = useState(0);
   const [orangeSpot, setOrangeSpot] = useState<AmbientSpot>({
@@ -289,6 +298,8 @@ export function FloatingCharacters({
   const [orangeHidden, setOrangeHidden] = useState(false);
   const [orangePaused, setOrangePaused] = useState(false);
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const lastGrapeTrailPoint = useRef<{ turnId: number; x: number; y: number } | null>(null);
+  const grapeTrailPointId = useRef(0);
   const photoCatTimer = useRef<number | null>(null);
   const grapeBoostTimer = useRef<number | null>(null);
   const reappearTimers = useRef<Map<string, number>>(new Map());
@@ -434,6 +445,45 @@ export function FloatingCharacters({
     return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [moveCharacter]);
 
+  const grapeMotion = motions[grapeCharacterIndex];
+
+  useEffect(() => {
+    if (!grapeMotion) return;
+
+    const sampleTrail = () => {
+      const character = characterRefs.current[grapeCharacterIndex];
+      if (!character) return;
+
+      const rect = character.getBoundingClientRect();
+      const x = Math.round((rect.left + rect.width / 2) / 6) * 6;
+      const y = Math.round((rect.bottom - 4 * characterScale) / 6) * 6;
+      const last = lastGrapeTrailPoint.current;
+
+      if (last?.turnId !== grapeMotion.turnId) {
+        lastGrapeTrailPoint.current = null;
+      } else if (Math.hypot(x - last.x, y - last.y) < 8) {
+        return;
+      }
+
+      lastGrapeTrailPoint.current = { turnId: grapeMotion.turnId, x, y };
+      grapeTrailPointId.current += 1;
+      setGrapeTrail((current) => [
+        ...current.slice(-139),
+        {
+          id: grapeTrailPointId.current,
+          turnId: grapeMotion.turnId,
+          x,
+          y,
+          rotation: grapeMotion.heading,
+        },
+      ]);
+    };
+
+    sampleTrail();
+    const timer = window.setInterval(sampleTrail, 45);
+    return () => window.clearInterval(timer);
+  }, [characterScale, grapeMotion]);
+
   useEffect(() => {
     const revealPhotoCat = (event: MouseEvent) => {
       const target = event.target;
@@ -491,6 +541,21 @@ export function FloatingCharacters({
     <div
       className={`floating-character-world${behindProjectCards ? " is-behind-project-cards" : ""}`}
     >
+      <div className="grape-path-trail" aria-hidden="true">
+        {grapeTrail
+          .filter((point) => point.turnId === grapeMotion?.turnId)
+          .map((point) => (
+            <span
+              className="grape-trail-pixel"
+              key={point.id}
+              style={{
+                width: 28 * characterScale,
+                height: 58 * characterScale,
+                transform: `translate3d(${point.x - 14 * characterScale}px, ${point.y - 4 * characterScale}px, 0) rotate(${point.rotation}deg)`,
+              }}
+            />
+          ))}
+      </div>
       {characters.map((character, index) => {
         const motion = motions[index];
         const isGrapeCat = index === grapeCharacterIndex;
@@ -508,7 +573,7 @@ export function FloatingCharacters({
           <span
             ref={(node) => { characterRefs.current[index] = node; }}
             key={character.src}
-            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}${isClickHidden ? " is-click-hidden" : ""}${isGrapeCat ? motion?.flip === -1 ? " is-facing-left" : " is-facing-right" : ""}`}
+            className={`floating-character ${character.className}${motion ? " is-roaming" : ""}${isClickHidden ? " is-click-hidden" : ""}`}
             style={style}
             onTransitionEnd={(event) => handleTransitionEnd(index, event)}
             data-no-photo-cat
