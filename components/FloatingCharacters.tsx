@@ -68,6 +68,17 @@ const characters = [
     edge: "any",
     delay: 1450,
   },
+  {
+    className: "floating-egypt-cat",
+    src: "/characters/egypt-cat-walk.gif",
+    width: 250,
+    height: 830,
+    displayWidth: 252,
+    baseFacing: 1,
+    orientation: "upright",
+    edge: "any",
+    delay: 1750,
+  },
 ] as const;
 
 const clickVanishCharacterIndexes = new Set([1, 2]);

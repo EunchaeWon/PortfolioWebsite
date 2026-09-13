@@ -2363,6 +2363,10 @@ body:has(.hero) .floating-character-world { opacity: 0.92; }
 .floating-grape-cat img {
   filter: drop-shadow(0 0 7px rgba(255, 89, 168, 0.58)) drop-shadow(3px 4px 0 rgba(36, 29, 24, 0.42));
 }
+.floating-character.is-roaming.floating-egypt-cat { z-index: 2; opacity: 0.94; }
+.floating-egypt-cat img {
+  filter: drop-shadow(0 0 8px rgba(255, 156, 57, 0.42)) drop-shadow(3px 5px 0 rgba(17, 12, 9, 0.46));
+}
 .floating-character.is-roaming.floating-cat-mummy { z-index: 3; opacity: 0.96; }
 .floating-cat-mummy {
   filter:
