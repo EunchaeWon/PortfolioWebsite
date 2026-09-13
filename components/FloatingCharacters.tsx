@@ -14,14 +14,6 @@ type Motion = {
   turnId: number;
 };
 
-type TrailPoint = {
-  id: number;
-  turnId: number;
-  x: number;
-  y: number;
-  rotation: number;
-};
-
 type AmbientSpot = {
   x: number;
   y: number;
@@ -33,20 +25,7 @@ type AmbientSpot = {
 
 const characters = [
   {
-    className: "floating-meme-cat",
-    media: "image",
-    src: "/characters/rainbow-meme-cat-no-rainbow.png",
-    width: 909,
-    height: 555,
-    displayWidth: 120,
-    baseFacing: 1,
-    orientation: "horizontal",
-    edge: "any",
-    delay: 300,
-  },
-  {
     className: "floating-robot",
-    media: "image",
     src: "/characters/flying-pixel-robot.png",
     width: 1536,
     height: 1024,
@@ -58,7 +37,6 @@ const characters = [
   },
   {
     className: "floating-cat-mummy floating-cat-mummy-1",
-    media: "image",
     src: "/characters/cat-mummy-new.png",
     width: 1024,
     height: 1536,
@@ -70,7 +48,6 @@ const characters = [
   },
   {
     className: "floating-cat-mummy floating-cat-mummy-2",
-    media: "image",
     src: "/characters/cat-mummy-2.png",
     width: 1365,
     height: 2048,
@@ -81,20 +58,7 @@ const characters = [
     delay: 450,
   },
   {
-    className: "floating-green-screen-cat",
-    media: "video",
-    src: "/characters/green-screen-cat.webm",
-    width: 200,
-    height: 200,
-    displayWidth: 116,
-    baseFacing: 1,
-    orientation: "horizontal",
-    edge: "any",
-    delay: 850,
-  },
-  {
     className: "floating-grape-cat",
-    media: "image",
     src: "/characters/grape-cat-walk.gif",
     width: 381,
     height: 480,
@@ -106,7 +70,7 @@ const characters = [
   },
 ] as const;
 
-const clickVanishCharacterIndexes = new Set([0, 2, 3]);
+const clickVanishCharacterIndexes = new Set([1, 2]);
 const clickVanishDelay = 5000;
 const characterScaleViewport = 1200;
 
@@ -297,7 +261,6 @@ export function FloatingCharacters({
   const [motions, setMotions] = useState<Array<Motion | null>>(
     characters.map(() => null),
   );
-  const [memeTrail, setMemeTrail] = useState<TrailPoint[]>([]);
   const [showPhotoCat, setShowPhotoCat] = useState(false);
   const [photoCatRun, setPhotoCatRun] = useState(0);
   const [orangeSpot, setOrangeSpot] = useState<AmbientSpot>({
@@ -312,8 +275,6 @@ export function FloatingCharacters({
   const [orangeHidden, setOrangeHidden] = useState(false);
   const [orangePaused, setOrangePaused] = useState(false);
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
-  const lastTrailPoint = useRef<{ turnId: number; x: number; y: number } | null>(null);
-  const trailPointId = useRef(0);
   const photoCatTimer = useRef<number | null>(null);
   const reappearTimers = useRef<Map<string, number>>(new Map());
   const [characterScale, setCharacterScale] = useState(1);
@@ -468,58 +429,6 @@ export function FloatingCharacters({
     };
   }, []);
 
-  const memeMotion = motions[0];
-
-  useEffect(() => {
-    if (!memeMotion) return;
-
-    const sampleTrail = () => {
-      const character = characterRefs.current[0];
-      if (!character) return;
-
-      const rect = character.getBoundingClientRect();
-      const spriteWidth = character.offsetWidth;
-      const spriteHeight = character.offsetHeight;
-      if (!spriteWidth || !spriteHeight) return;
-
-      // This is the actual tail/toast junction in the source sprite. Transform
-      // that point with the image flip and outer rotation so the first rainbow
-      // pixel remains attached even while the cat turns.
-      const tailRatioX = memeMotion.flip === 1 ? 0.23 : 0.77;
-      const localX = spriteWidth * tailRatioX - spriteWidth / 2;
-      const localY = spriteHeight * 0.55 - spriteHeight / 2;
-      const rotationRadians = memeMotion.rotation * (Math.PI / 180);
-      const anchorX =
-        rect.left + rect.width / 2
-        + localX * Math.cos(rotationRadians)
-        - localY * Math.sin(rotationRadians);
-      const anchorY =
-        rect.top + rect.height / 2
-        + localX * Math.sin(rotationRadians)
-        + localY * Math.cos(rotationRadians);
-      const x = Math.round(anchorX / 6) * 6;
-      const y = Math.round(anchorY / 6) * 6;
-      const last = lastTrailPoint.current;
-
-      if (last?.turnId !== memeMotion.turnId) {
-        lastTrailPoint.current = null;
-      } else if (Math.hypot(x - last.x, y - last.y) < 8) {
-        return;
-      }
-
-      lastTrailPoint.current = { turnId: memeMotion.turnId, x, y };
-      trailPointId.current += 1;
-      setMemeTrail((current) => [
-        ...current.slice(-139),
-        { id: trailPointId.current, turnId: memeMotion.turnId, x, y, rotation: memeMotion.heading },
-      ]);
-    };
-
-    sampleTrail();
-    const timer = window.setInterval(sampleTrail, 45);
-    return () => window.clearInterval(timer);
-  }, [memeMotion]);
-
   const handleTransitionEnd = (
     index: number,
     event: TransitionEvent<HTMLSpanElement>,
@@ -527,15 +436,6 @@ export function FloatingCharacters({
     if (event.target === event.currentTarget && event.propertyName === "transform") {
       moveCharacter(index);
     }
-  };
-
-  const playRotatingCat = (index: number) => {
-    const video = characterRefs.current[index]?.querySelector("video");
-    if (!video) return;
-
-    video.pause();
-    video.currentTime = 0;
-    void video.play();
   };
 
   const moveOrangeCatToEdge = () => {
@@ -564,27 +464,8 @@ export function FloatingCharacters({
     <div
       className={`floating-character-world${behindProjectCards ? " is-behind-project-cards" : ""}`}
     >
-      <div
-        className={`meme-path-trail${vanishOnClick && hiddenCharacters.has(0) ? " is-click-hidden" : ""}`}
-        aria-hidden="true"
-      >
-        {memeTrail
-          .filter((point) => point.turnId === memeMotion?.turnId)
-          .map((point) => (
-            <span
-              className="meme-trail-pixel"
-              key={point.id}
-              style={{
-                width: 28 * characterScale,
-                height: 58 * characterScale,
-                transform: `translate3d(${point.x - 14 * characterScale}px, ${point.y - 29 * characterScale}px, 0) rotate(${point.rotation}deg)`,
-              }}
-            />
-          ))}
-      </div>
       {characters.map((character, index) => {
         const motion = motions[index];
-        const isRotatingCat = character.className === "floating-green-screen-cat";
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
@@ -609,7 +490,6 @@ export function FloatingCharacters({
                 vanishCharacter(index);
                 return;
               }
-              if (isRotatingCat) playRotatingCat(index);
               moveCharacterToEdge(index);
             }}
             onKeyDown={(event) => {
@@ -620,7 +500,6 @@ export function FloatingCharacters({
                   vanishCharacter(index);
                   return;
                 }
-                if (isRotatingCat) playRotatingCat(index);
                 moveCharacterToEdge(index);
               }
             }}
@@ -628,28 +507,16 @@ export function FloatingCharacters({
             tabIndex={0}
             aria-label={vanishesWhenClicked ? "Hide character" : "Move character to the edge of the screen"}
           >
-            {character.media === "video" ? (
-              <video
-                src={character.src}
-                muted
-                playsInline
-                preload="auto"
-                disablePictureInPicture
-                onEnded={(event) => { event.currentTarget.currentTime = 0; }}
-                style={{ transform: `scaleX(${motion?.flip ?? 1})` }}
-              />
-            ) : (
-              <Image
-                src={character.src}
-                alt=""
-                width={character.width}
-                height={character.height}
-                sizes={`${character.displayWidth}px`}
-                draggable={false}
-                unoptimized={character.src.endsWith(".gif")}
-                style={{ transform: `scaleX(${motion?.flip ?? 1})` }}
-              />
-            )}
+            <Image
+              src={character.src}
+              alt=""
+              width={character.width}
+              height={character.height}
+              sizes={`${character.displayWidth}px`}
+              draggable={false}
+              unoptimized={character.src.endsWith(".gif")}
+              style={{ transform: `scaleX(${motion?.flip ?? 1})` }}
+            />
           </span>
         );
       })}
