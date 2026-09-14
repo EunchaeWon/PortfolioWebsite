@@ -483,12 +483,15 @@ function Odette({ visible }: { visible: boolean }) {
     group.scale.multiplyScalar(targetHeight / height);
   });
   useEffect(() => {
-    const originals: { mesh: Mesh; material: Mesh["material"]; geometry: Mesh["geometry"] }[] = [];
+    const originals: { mesh: Mesh; material: Mesh["material"]; geometry: Mesh["geometry"]; frustumCulled: boolean }[] = [];
     const cards: MeshStandardMaterial[] = [];
     model.traverse(object => {
       if (!(object instanceof Mesh)) return;
       const source = Array.isArray(object.material) ? object.material : [object.material];
-      originals.push({ mesh: object, material: object.material, geometry: object.geometry });
+      originals.push({ mesh: object, material: object.material, geometry: object.geometry, frustumCulled: object.frustumCulled });
+      // BalletPose and the fitted rig scale invalidate imported pose bounds.
+      // Keep Odette's small set of meshes visible during close inspection.
+      object.frustumCulled = false;
       object.geometry = object.geometry.clone();
       object.geometry.deleteAttribute("color");
       const materials = source.map(material => {
@@ -509,10 +512,11 @@ function Odette({ visible }: { visible: boolean }) {
       object.material = Array.isArray(object.material) ? materials : materials[0];
     });
     return () => {
-      originals.forEach(({ mesh, material, geometry }) => {
+      originals.forEach(({ mesh, material, geometry, frustumCulled }) => {
         mesh.geometry.dispose();
         mesh.geometry = geometry;
         mesh.material = material;
+        mesh.frustumCulled = frustumCulled;
       });
       cards.forEach(material => material.dispose());
     };
@@ -546,6 +550,7 @@ function WorldCamera({ request }: { request: { pov: number; version: number } })
   useFrame(({ camera }) => {
     if (!controls.current || applied.current === request.version || !(camera instanceof PerspectiveCamera)) return;
     const orbit = controls.current;
+    camera.near = request.pov === 5 ? 0.0001 : 0.001;
     if (request.pov === 1) {
       camera.position.set(-0.09450368318859186, -1.0076274064877306, -0.01692057046542648);
       orbit.target.set(-0.09450379257416601, -0.01459693722918709, -0.01691958298995035);
