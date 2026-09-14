@@ -495,16 +495,29 @@ export function FloatingCharacters({
 
       lastGrapeTrailPoint.current = { turnId: grapeMotion.turnId, x, y };
       grapeTrailPointId.current += 1;
-      setGrapeTrail((current) => [
-        ...current.slice(-139),
-        {
+      setGrapeTrail((current) => {
+        const points = current.filter((point) => point.turnId === grapeMotion.turnId);
+        points.push({
           id: grapeTrailPointId.current,
           turnId: grapeMotion.turnId,
           x,
           y,
           rotation: grapeMotion.heading,
-        },
-      ]);
+        });
+        // Include the end pixels in the 500 CSS-pixel trail length limit.
+        let length = 28 * characterScale;
+        let first = points.length - 1;
+        while (first > 0) {
+          const segment = Math.hypot(
+            points[first].x - points[first - 1].x,
+            points[first].y - points[first - 1].y,
+          );
+          if (length + segment > 500) break;
+          length += segment;
+          first -= 1;
+        }
+        return points.slice(first);
+      });
     };
 
     sampleTrail();
