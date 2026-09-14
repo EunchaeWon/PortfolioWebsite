@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 from PIL import Image
 
 root = Path(__file__).resolve().parents[1]
@@ -20,15 +21,13 @@ def frame(name):
     indexed.info['transparency'] = 255
     return indexed
 
-frames = [frame('EgyptCat1.jpg'), frame('EgyptCat2.jpg')]
-for name, duration in [('egypt-cat-face-walk-v2.gif', 320)]:
-    frames[0].save(output / name, save_all=True, append_images=frames[1:],
-                   duration=duration, loop=0, disposal=2, transparency=255, optimize=False)
-for name in ['egypt-cat-face-walk-v2.gif']:
-    image = Image.open(output / name)
-    print(name, image.size, image.n_frames, image.info.get('duration'))
+if '--portrait-only' not in sys.argv:
+    frames = [frame('EgyptCat1.jpg'), frame('EgyptCat2.jpg')]
+    frames[0].save(output / 'egypt-cat-face-fast.gif', save_all=True,
+                   append_images=frames[1:], duration=160, loop=0,
+                   disposal=2, transparency=255, optimize=False)
 
 click_frames = [frame('EgyptCat3.jpg'), frame('EgyptCat4.jpg')]
-click_frames[0].save(output / 'egypt-cat-click-portrait.gif', save_all=True,
-                     append_images=click_frames[1:], duration=160, loop=0,
+click_frames[0].save(output / 'egypt-cat-portrait-idle-v2.gif', save_all=True,
+                     append_images=click_frames[1:], duration=320, loop=0,
                      disposal=2, transparency=255, optimize=False)

@@ -78,7 +78,7 @@ const characters = [
   },
   {
     className: "floating-egypt-cat",
-    src: "/characters/egypt-cat-portrait-idle.gif",
+    src: "/characters/egypt-cat-portrait-idle-v2.gif",
     width: 250,
     height: 830,
     displayWidth: 63,
@@ -319,7 +319,7 @@ export function FloatingCharacters({
   useEffect(() => {
     const fastImage = new window.Image();
     fastImage.src = "/characters/grape-cat-walk-fast.gif";
-    for (const src of ["egypt-cat-portrait-idle.gif", "egypt-cat-face-fast.gif"]) {
+    for (const src of ["egypt-cat-portrait-idle-v2.gif", "egypt-cat-face-fast.gif"]) {
       const image = new window.Image();
       image.src = `/characters/${src}`;
     }
@@ -580,7 +580,7 @@ export function FloatingCharacters({
         const isGrapeCat = index === grapeCharacterIndex;
         const isEgyptCat = character.className === "floating-egypt-cat";
         const egyptSource = egyptBoosted ? "/characters/egypt-cat-face-fast.gif"
-          : "/characters/egypt-cat-portrait-idle.gif";
+          : "/characters/egypt-cat-portrait-idle-v2.gif";
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
