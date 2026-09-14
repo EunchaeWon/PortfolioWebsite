@@ -2020,7 +2020,7 @@ button, summary { color: inherit; font: inherit; }
 .terminal-body a { display: inline-block; margin-top: 2.3rem; padding: 0.55rem 0.75rem; border: 1px solid var(--ink); background: var(--acid); color: #050714; font-weight: 700; text-transform: uppercase; }
 
 .studies-jump { display: inline-block; margin: 0 0 2rem; color: var(--acid); }
-.selected-studies { margin-top: clamp(3rem, 6vw, 6rem); }
+.selected-studies { position: relative; z-index: 2; margin-top: clamp(3rem, 6vw, 6rem); }
 .selected-studies h2 { font-family: "VT323", monospace; font-size: clamp(2rem, 4vw, 4rem); margin: 0 0 1.5rem; }
 .selected-studies-grid { display: grid; gap: 1.5rem; }
 .study-card { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; min-width: 0; background: #101b29; color: #e0eeee; border: 1px solid #467c79; }
