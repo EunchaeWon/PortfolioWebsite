@@ -20,10 +20,10 @@ def frame(name):
     indexed.info['transparency'] = 255
     return indexed
 
-frames = [frame('EgyptCat2.jpg'), frame('EgyptCat1.jpg')]
-for name, duration in [('egypt-cat-face-walk.gif', 320)]:
+frames = [frame('EgyptCat1.jpg'), frame('EgyptCat2.jpg')]
+for name, duration in [('egypt-cat-face-walk-v2.gif', 320)]:
     frames[0].save(output / name, save_all=True, append_images=frames[1:],
                    duration=duration, loop=0, disposal=2, transparency=255, optimize=False)
-for name in ['egypt-cat-face-walk.gif']:
+for name in ['egypt-cat-face-walk-v2.gif']:
     image = Image.open(output / name)
     print(name, image.size, image.n_frames, image.info.get('duration'))
