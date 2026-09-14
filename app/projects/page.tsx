@@ -7,6 +7,7 @@ import { NeonCatSprinkles } from "@/components/NeonCatSprinkles";
 import { Header } from "@/components/Header";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal } from "@/components/Reveal";
+import { SelectedStudies } from "@/components/SelectedStudies";
 import { projects } from "@/data/projects";
 
 const githubUrl = "https://github.com/EunchaeWon";
@@ -41,6 +42,8 @@ export default function ProjectsPage() {
             </div>
           </Reveal>
 
+          <a className="studies-jump" href="#animation-studies">Animation &amp; process ↓</a>
+
           <div className="projects-list">
             {projects.map((project, index) => (
               <Reveal key={project.slug}>
@@ -48,6 +51,7 @@ export default function ProjectsPage() {
               </Reveal>
             ))}
           </div>
+          <SelectedStudies />
         </section>
       </main>
 
