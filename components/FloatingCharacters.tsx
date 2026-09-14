@@ -141,8 +141,9 @@ function createMotion(
   orientation: "horizontal" | "vertical" | "upright",
   edge: "any" | "left" | "right",
   previous: Motion | null,
+  movementWidth = window.innerWidth,
 ): Motion {
-  const maxX = Math.max(24, window.innerWidth - displayWidth - 24);
+  const maxX = Math.max(24, movementWidth - displayWidth - 24);
   const maxY = Math.max(110, window.innerHeight - displayHeight - 24);
   let x = 18 + Math.random() * (maxX - 18);
   let y = 82 + Math.random() * (maxY - 82);
@@ -219,10 +220,11 @@ function createEdgeMotion(
   baseFacing: 1 | -1,
   orientation: "horizontal" | "vertical" | "upright",
   previous: Motion | null,
+  movementWidth = window.innerWidth,
 ): Motion {
   const margin = 10;
   const headerY = Math.min(70, Math.max(18, window.innerHeight * 0.045));
-  const maxX = Math.max(margin, window.innerWidth - displayWidth - margin);
+  const maxX = Math.max(margin, movementWidth - displayWidth - margin);
   const maxY = Math.max(headerY, window.innerHeight - displayHeight - margin);
   const currentX = previous?.x ?? window.innerWidth / 2 - displayWidth / 2;
   const currentY = previous?.y ?? window.innerHeight / 2 - displayHeight / 2;
@@ -396,6 +398,7 @@ export function FloatingCharacters({
               characters[index].orientation,
               characters[index].edge,
               motion,
+              characters[index].className === "floating-egypt-cat" ? window.innerWidth / 2 : window.innerWidth,
             )
           : motion,
       ),
@@ -412,6 +415,7 @@ export function FloatingCharacters({
               characters[index].baseFacing,
               characters[index].orientation,
               motion,
+              characters[index].className === "floating-egypt-cat" ? window.innerWidth / 2 : window.innerWidth,
             )
           : motion,
       ),
