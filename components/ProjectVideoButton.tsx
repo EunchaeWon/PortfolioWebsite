@@ -7,6 +7,7 @@ type ProjectVideoButtonProps = {
   title: string;
   videoUrl: string;
   label?: string;
+  imageOverlay?: boolean;
 };
 
 function parseTimeToSeconds(value: string | null) {
@@ -49,7 +50,7 @@ function getYouTubeEmbedUrl(videoUrl: string) {
   }
 }
 
-export function ProjectVideoButton({ title, videoUrl, label = "Watch" }: ProjectVideoButtonProps) {
+export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOverlay = false }: ProjectVideoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [playerRevision, setPlayerRevision] = useState(0);
   const [playerStatus, setPlayerStatus] = useState("Loading YouTube player…");
@@ -110,12 +111,13 @@ export function ProjectVideoButton({ title, videoUrl, label = "Watch" }: Project
     <>
       <button
         ref={triggerRef}
-        className="project-video-trigger"
+        className={imageOverlay ? "project-video-trigger project-image-video-trigger" : "project-video-trigger"}
         type="button"
         onClick={() => setIsOpen(true)}
         aria-haspopup="dialog"
+        aria-label={imageOverlay ? `Watch ${title}` : undefined}
       >
-        {label} <span aria-hidden="true">▶</span>
+        {imageOverlay ? <span className="project-image-watch-label">Watch ▶</span> : <>{label} <span aria-hidden="true">▶</span></>}
       </button>
 
       {isOpen && typeof document !== "undefined"

@@ -58,6 +58,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
             unoptimized
           />
           <span className="media-hint" aria-hidden="true">hover / second view</span></>}
+          {videos[0] && <ProjectVideoButton title={project.title} videoUrl={videos[0].url} label={videos[0].label} imageOverlay />}
         </div>
       </div>
 

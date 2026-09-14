@@ -25,6 +25,7 @@ export function SelectedStudies() {
           <article className="study-card" id={study.id} key={study.id}>
             <div className="study-image">
               <Image src={study.image} alt={study.alt} fill sizes="(max-width: 900px) 92vw, 44vw" loading="lazy" unoptimized />
+              <ProjectVideoButton title={study.title} videoUrl={study.video} imageOverlay />
             </div>
             <div className="study-content">
               <p className="eyebrow">{study.meta}</p>
