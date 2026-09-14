@@ -651,7 +651,7 @@ export function FloatingCharacters({
               sizes={`${character.displayWidth}px`}
               draggable={false}
               unoptimized={character.src.endsWith(".gif")}
-              style={{ transform: `scaleX(${isEgyptCat ? 1 : motion?.flip ?? 1})` }}
+              style={{ transform: `scaleX(${isEgyptCat ? (egyptBoosted ? -1 : 1) : motion?.flip ?? 1})` }}
             />
           </span>
         );
