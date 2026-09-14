@@ -5,6 +5,7 @@ import { useRef } from "react";
 
 type HeaderProps = {
   githubUrl: string;
+  showProjectGuide?: boolean;
 };
 
 const internalLinks = [
@@ -14,7 +15,7 @@ const internalLinks = [
   { label: "Contact", href: "/#contact" },
 ];
 
-export function Header({ githubUrl }: HeaderProps) {
+export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
 
   const closeMobileMenu = () => {
@@ -29,7 +30,14 @@ export function Header({ githubUrl }: HeaderProps) {
 
       <nav className="desktop-nav" aria-label="Primary navigation">
         {internalLinks.map((link) => (
-          <Link key={link.href} href={link.href}>{link.label}</Link>
+          <Link key={link.href} href={link.href} className={showProjectGuide && link.href === "/projects" ? "project-guided-link" : undefined}>
+            {link.label}
+            {showProjectGuide && link.href === "/projects" && (
+              <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
+                <span>↖</span><small>Click</small>
+              </span>
+            )}
+          </Link>
         ))}
         <a href={githubUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
       </nav>

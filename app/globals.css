@@ -607,6 +607,26 @@ button, summary { color: inherit; font: inherit; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.project-guided-link { position: relative; }
+.monitor-click-cursor.header-project-guide {
+  top: calc(100% + 7px);
+  left: 65%;
+  white-space: nowrap;
+}
+.monitor-click-cursor.home-scroll-guide {
+  top: auto;
+  bottom: 24px;
+  left: calc(50% - 35px);
+  width: 70px;
+  gap: 8px;
+  pointer-events: auto;
+  text-decoration: none;
+}
+.home-scroll-guide > span { transform: none; }
+.home-scroll-guide small { font-size: 0.75rem; }
+@media (prefers-reduced-motion: reduce) {
+  .header-project-guide, .home-scroll-guide { animation: none; }
+}
 .monitor-screen::after {
   position: absolute;
   inset: 0;

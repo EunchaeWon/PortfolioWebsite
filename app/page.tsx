@@ -37,7 +37,7 @@ export default function Home() {
       <TopToCassetteScroll />
       <AboutDecorations />
       <div className="top-navigation-track">
-        <Header githubUrl={links.github} />
+        <Header githubUrl={links.github} showProjectGuide />
       </div>
 
       <main>
@@ -90,6 +90,10 @@ export default function Home() {
             </div>
           </div>
 
+          <a className="monitor-click-cursor home-scroll-guide" href="#play" aria-label="Scroll to cassette library">
+            <small>SCROLL</small>
+            <span aria-hidden="true">↓</span>
+          </a>
           <span className="sprinkle sprinkle-a" aria-hidden="true" />
           <span className="sprinkle sprinkle-b" aria-hidden="true" />
           <span className="sprinkle sprinkle-c" aria-hidden="true" />
