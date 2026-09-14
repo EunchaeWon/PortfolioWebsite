@@ -149,11 +149,22 @@ export default function Home() {
               I&apos;m Eunchae Won, a solo game developer and digital artist making
               playable works about choice, transformation, memory, and the body.
             </p>
-            <p>
-              Since 2021, I have developed 2D and 3D PC games, real-time moving
-              image, performance-based animation, and physical controllers. I work
-              across the whole pipeline—from gameplay programming and systems design
-              to modeling, texturing, rigging, animation, sound, and presentation.
+            <p className="about-practice">
+              Since 2021, I have worked at the intersection of game development and
+              digital art, turning ideas about choice, transformation, and the body
+              into interactions people can play. Using Unity and C#, and Unreal
+              Engine 5 with C++ and Blueprints, I connect gameplay systems with
+              original characters, environments, animation, and sound.
+            </p>
+            <p className="about-practice">
+              My practice spans concept development, prototyping, and the 3D
+              production pipeline—from sculpting and texturing to rigging and
+              real-time integration. In Hopeless Butterfly, I paired a four-stage
+              game with a handmade cocoon controller; in In the Forest, I worked
+              with captured performance and creature animation. These projects
+              reflect my focus: making visual ideas work as interactive experiences,
+              with an understanding of both the artistic intent and its technical
+              implementation.
             </p>
 
             <section className="education-block" aria-labelledby="education-title">

@@ -2059,6 +2059,10 @@ button, summary { color: inherit; font: inherit; }
   line-height: 1.65;
   text-shadow: 1px 0 rgba(255, 20, 157, 0.78), -1px 0 rgba(0, 245, 212, 0.86), 0 0 1px rgba(255, 255, 255, 0.82), 0 2px 3px rgba(7, 9, 22, 0.3);
 }
+.about-copy > .about-practice {
+  color: #171e2d;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
 .about-copy .about-lead {
   font-family: "VT323", "Courier New", monospace;
   font-size: clamp(1.7rem, 2.7vw, 2.45rem);
