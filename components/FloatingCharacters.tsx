@@ -705,10 +705,10 @@ export function FloatingCharacters({
         className={`static-rainbow-cat${showPhotoCat ? " is-visible" : ""}`}
       >
         <Image
-          src="/characters/rainbow-light-cat-final.png"
+          src="/characters/click-face.jpg"
           alt=""
-          width={1709}
-          height={2349}
+          width={169}
+          height={221}
           sizes="(max-width: 680px) 58vw, 448px"
           draggable={false}
           priority
