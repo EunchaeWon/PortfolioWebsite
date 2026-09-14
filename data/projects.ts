@@ -244,7 +244,6 @@ const projectCatalog: Project[] = [
       sourceUrl: "https://www.krakenfilmfest.com/autumn-2025-winners",
       sourceLabel: "Official proof · Faces within the Wheel — Best Animation",
     },
-    artworkUrl: "https://eunchae.artstation.com/projects/ZlYrRR",
     videoUrl: "https://youtu.be/vZ_Cf_vFcvo",
     accent: "coral",
   },
