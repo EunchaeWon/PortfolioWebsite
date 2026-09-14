@@ -81,7 +81,7 @@ const characters = [
     src: "/characters/egypt-cat-face-walk.gif",
     width: 250,
     height: 830,
-    displayWidth: 252,
+    displayWidth: 126,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
