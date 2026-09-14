@@ -479,9 +479,9 @@ export function FloatingCharacters({
 
       const rect = character.getBoundingClientRect();
       const parentRect = character.parentElement!.getBoundingClientRect();
-      // Attach one ninth of the sprite height above its bottom centre.
+      // Attach one ninth plus one seventh of the sprite height above its bottom.
       const matrix = new DOMMatrixReadOnly(getComputedStyle(character).transform);
-      const anchorOffsetY = character.offsetHeight * (0.5 - 1 / 9);
+      const anchorOffsetY = character.offsetHeight * (0.5 - 1 / 9 - 1 / 7);
       const x = rect.left + rect.width / 2 + matrix.c * anchorOffsetY - parentRect.left;
       const y = rect.top + rect.height / 2 + matrix.d * anchorOffsetY - parentRect.top;
       const last = lastGrapeTrailPoint.current;
