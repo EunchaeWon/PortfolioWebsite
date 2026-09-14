@@ -610,22 +610,34 @@ button, summary { color: inherit; font: inherit; }
 .project-guided-link { position: relative; }
 .monitor-click-cursor.header-project-guide {
   top: calc(100% + 7px);
-  left: 65%;
+  left: 0;
   white-space: nowrap;
+  animation: header-guide-point 1.45s ease-in-out infinite;
 }
+.header-project-guide > span { transform: none; }
 .monitor-click-cursor.home-scroll-guide {
   top: auto;
   bottom: 24px;
-  left: calc(50% - 35px);
+  left: 15%;
   width: 70px;
   gap: 8px;
   pointer-events: auto;
   text-decoration: none;
+  animation: scroll-guide-point 1.45s ease-in-out infinite;
 }
 .home-scroll-guide > span { transform: none; }
 .home-scroll-guide small { font-size: 0.75rem; }
+@keyframes header-guide-point {
+  0%, 100% { opacity: 0.72; transform: translate3d(0, 0, 0); }
+  50% { opacity: 1; transform: translate3d(7px, -7px, 0); }
+}
+@keyframes scroll-guide-point {
+  0%, 100% { opacity: 0.72; transform: translate3d(0, 0, 0); }
+  50% { opacity: 1; transform: translate3d(0, 10px, 0); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .header-project-guide, .home-scroll-guide { animation: none; }
+  .monitor-click-cursor.header-project-guide,
+  .monitor-click-cursor.home-scroll-guide { animation: none; }
 }
 .monitor-screen::after {
   position: absolute;

@@ -34,7 +34,7 @@ export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
             {link.label}
             {showProjectGuide && link.href === "/projects" && (
               <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
-                <span>↖</span><small>Click</small>
+                <span>↗</span><small>Click</small>
               </span>
             )}
           </Link>
