@@ -81,7 +81,7 @@ const characters = [
     src: "/characters/egypt-cat-face-walk-v2.gif",
     width: 250,
     height: 830,
-    displayWidth: 63,
+    displayWidth: 84,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
@@ -398,7 +398,7 @@ export function FloatingCharacters({
               characters[index].orientation,
               characters[index].edge,
               motion,
-              characters[index].className === "floating-egypt-cat" ? window.innerWidth / 2 : window.innerWidth,
+              characters[index].className === "floating-egypt-cat" ? window.innerWidth * 0.42 : window.innerWidth,
             )
           : motion,
       ),
@@ -415,7 +415,7 @@ export function FloatingCharacters({
               characters[index].baseFacing,
               characters[index].orientation,
               motion,
-              characters[index].className === "floating-egypt-cat" ? window.innerWidth / 2 : window.innerWidth,
+              characters[index].className === "floating-egypt-cat" ? window.innerWidth * 0.42 : window.innerWidth,
             )
           : motion,
       ),
