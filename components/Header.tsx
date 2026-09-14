@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 type HeaderProps = {
   githubUrl: string;
-  showProjectGuide?: boolean;
+  showWorldGuide?: boolean;
 };
 
 const internalLinks = [
@@ -15,17 +15,17 @@ const internalLinks = [
   { label: "Contact", href: "/#contact" },
 ];
 
-export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
+export function Header({ githubUrl, showWorldGuide = false }: HeaderProps) {
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
   const [isAtTop, setIsAtTop] = useState(false);
 
   useEffect(() => {
-    if (!showProjectGuide) return;
+    if (!showWorldGuide) return;
     const updatePosition = () => setIsAtTop(window.scrollY <= 2);
     updatePosition();
     window.addEventListener("scroll", updatePosition, { passive: true });
     return () => window.removeEventListener("scroll", updatePosition);
-  }, [showProjectGuide]);
+  }, [showWorldGuide]);
 
   const closeMobileMenu = () => {
     if (mobileMenuRef.current) mobileMenuRef.current.open = false;
@@ -39,9 +39,9 @@ export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
 
       <nav className="desktop-nav" aria-label="Primary navigation">
         {internalLinks.map((link) => (
-          <Link key={link.href} href={link.href} className={showProjectGuide && link.href === "/projects" ? "project-guided-link" : undefined}>
+          <Link key={link.href} href={link.href} className={showWorldGuide && link.href === "/world" ? "project-guided-link" : undefined}>
             {link.label}
-            {showProjectGuide && isAtTop && link.href === "/projects" && (
+            {showWorldGuide && isAtTop && link.href === "/world" && (
               <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
                 <span>↗</span><small>Click</small>
               </span>

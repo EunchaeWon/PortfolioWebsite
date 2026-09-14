@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 
 const titles = [
-  { label: "Hello, Strangers", lines: ["Hello,", "Strangers"], compact: false },
+  { label: "Welcome, Stranger,", lines: ["Welcome,", "Stranger,"], compact: false },
   {
-    label: "See Eunchae's Strange World",
-    lines: ["See Eunchae's", "Strange", "World"],
+    label: "A Strange World for Strangers",
+    lines: ["A Strange World", "for", "Strangers"],
     compact: true,
   },
 ] as const;

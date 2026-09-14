@@ -37,7 +37,7 @@ export default function Home() {
       <TopToCassetteScroll />
       <AboutDecorations />
       <div className="top-navigation-track">
-        <Header githubUrl={links.github} showProjectGuide />
+        <Header githubUrl={links.github} />
       </div>
 
       <main>
@@ -72,12 +72,12 @@ export default function Home() {
                   </p>
                   <div className="monitor-actions">
                     <span className="monitor-button monitor-button-primary">
-                      <span className="monitor-button-label">View&nbsp;World&nbsp;↗</span>
+                      <span className="monitor-button-label">View&nbsp;Projects&nbsp;↗</span>
                     </span>
                   </div>
                   <span className="monitor-glare" aria-hidden="true" />
                 </div>
-                <a className="monitor-world-link" href="/world" aria-label="Enter Cat Paw World" />
+                <a className="monitor-world-link" href="/projects" aria-label="View selected projects" />
               </div>
               <span className="monitor-click-cursor" aria-hidden="true">
                 <span>↖</span>
