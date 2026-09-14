@@ -70,7 +70,7 @@ const characters = [
     src: "/characters/grape-cat-walk.gif",
     width: 381,
     height: 480,
-    displayWidth: 252,
+    displayWidth: 168,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
