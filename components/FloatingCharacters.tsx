@@ -81,7 +81,7 @@ const characters = [
     src: "/characters/egypt-cat-portrait-idle.gif",
     width: 250,
     height: 830,
-    displayWidth: 84,
+    displayWidth: 63,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
