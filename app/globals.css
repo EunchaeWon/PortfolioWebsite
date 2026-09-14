@@ -2030,8 +2030,8 @@ button, summary { color: inherit; font: inherit; }
 .about-section {
   display: grid;
   grid-template-columns: minmax(300px, 0.78fr) minmax(340px, 1.05fr) minmax(280px, 0.72fr);
-  gap: clamp(2.5rem, 6vw, 7rem);
-  padding: clamp(6rem, 11vw, 11rem) 4vw;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(4rem, 7vw, 7rem) 4vw;
   background: var(--site-checkerboard);
   font-family: "Courier New", Courier, monospace;
 }
@@ -2061,6 +2061,7 @@ button, summary { color: inherit; font: inherit; }
 }
 .about-copy > .about-practice {
   color: #171e2d;
+  line-height: 1.5;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .about-copy .about-lead {

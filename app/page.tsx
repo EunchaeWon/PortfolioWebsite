@@ -150,21 +150,10 @@ export default function Home() {
               playable works about choice, transformation, memory, and the body.
             </p>
             <p className="about-practice">
-              Since 2021, I have worked at the intersection of game development and
-              digital art, turning ideas about choice, transformation, and the body
-              into interactions people can play. Using Unity and C#, and Unreal
-              Engine 5 with C++ and Blueprints, I connect gameplay systems with
-              original characters, environments, animation, and sound.
-            </p>
-            <p className="about-practice">
-              My practice spans concept development, prototyping, and the 3D
-              production pipeline—from sculpting and texturing to rigging and
-              real-time integration. In Hopeless Butterfly, I paired a four-stage
-              game with a handmade cocoon controller; in In the Forest, I worked
-              with captured performance and creature animation. These projects
-              reflect my focus: making visual ideas work as interactive experiences,
-              with an understanding of both the artistic intent and its technical
-              implementation.
+              Since 2021, I have combined gameplay programming with original 3D
+              characters, animation, and physical interfaces. Working in Unity and
+              Unreal Engine, I take projects from concept and prototype to playable
+              experiences—connecting artistic ideas with technical implementation.
             </p>
 
             <section className="education-block" aria-labelledby="education-title">
