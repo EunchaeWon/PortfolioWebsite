@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type HeaderProps = {
   githubUrl: string;
@@ -17,6 +17,15 @@ const internalLinks = [
 
 export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
+  const [isAtTop, setIsAtTop] = useState(false);
+
+  useEffect(() => {
+    if (!showProjectGuide) return;
+    const updatePosition = () => setIsAtTop(window.scrollY <= 2);
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, { passive: true });
+    return () => window.removeEventListener("scroll", updatePosition);
+  }, [showProjectGuide]);
 
   const closeMobileMenu = () => {
     if (mobileMenuRef.current) mobileMenuRef.current.open = false;
@@ -32,7 +41,7 @@ export function Header({ githubUrl, showProjectGuide = false }: HeaderProps) {
         {internalLinks.map((link) => (
           <Link key={link.href} href={link.href} className={showProjectGuide && link.href === "/projects" ? "project-guided-link" : undefined}>
             {link.label}
-            {showProjectGuide && link.href === "/projects" && (
+            {showProjectGuide && isAtTop && link.href === "/projects" && (
               <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
                 <span>↗</span><small>Click</small>
               </span>
