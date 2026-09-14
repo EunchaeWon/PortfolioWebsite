@@ -81,7 +81,7 @@ const characters = [
     src: "/characters/egypt-cat-face-walk.gif",
     width: 250,
     height: 830,
-    displayWidth: 126,
+    displayWidth: 63,
     baseFacing: 1,
     orientation: "upright",
     edge: "any",
@@ -651,7 +651,7 @@ export function FloatingCharacters({
               sizes={`${character.displayWidth}px`}
               draggable={false}
               unoptimized={character.src.endsWith(".gif")}
-              style={{ transform: `scaleX(${motion?.flip ?? 1})` }}
+              style={{ transform: `scaleX(${isEgyptCat ? 1 : motion?.flip ?? 1})` }}
             />
           </span>
         );
