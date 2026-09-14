@@ -27,3 +27,8 @@ for name, duration in [('egypt-cat-face-walk-v2.gif', 320)]:
 for name in ['egypt-cat-face-walk-v2.gif']:
     image = Image.open(output / name)
     print(name, image.size, image.n_frames, image.info.get('duration'))
+
+click_frames = [frame('EgyptCat3.jpg'), frame('EgyptCat4.jpg')]
+click_frames[0].save(output / 'egypt-cat-click-portrait.gif', save_all=True,
+                     append_images=click_frames[1:], duration=160, loop=0,
+                     disposal=2, transparency=255, optimize=False)

@@ -322,7 +322,7 @@ export function FloatingCharacters({
   useEffect(() => {
     const fastImage = new window.Image();
     fastImage.src = "/characters/grape-cat-walk-fast.gif";
-    for (const src of ["egypt-cat-face-walk-v2.gif", "egypt-cat-new-fast.gif"]) {
+    for (const src of ["egypt-cat-face-walk-v2.gif", "egypt-cat-click-portrait.gif"]) {
       const image = new window.Image();
       image.src = `/characters/${src}`;
     }
@@ -591,7 +591,7 @@ export function FloatingCharacters({
         const motion = motions[index];
         const isGrapeCat = index === grapeCharacterIndex;
         const isEgyptCat = character.className === "floating-egypt-cat";
-        const egyptSource = egyptBoosted ? "/characters/egypt-cat-new-fast.gif"
+        const egyptSource = egyptBoosted ? "/characters/egypt-cat-click-portrait.gif"
           : "/characters/egypt-cat-face-walk-v2.gif";
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
