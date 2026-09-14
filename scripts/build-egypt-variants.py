@@ -21,10 +21,9 @@ def frame(name):
     return indexed
 
 frames = [frame('EgyptCat2.jpg'), frame('EgyptCat1.jpg')]
-for name, duration in [('egypt-cat-new-walk.gif', 320), ('egypt-cat-new-fast.gif', 160)]:
+for name, duration in [('egypt-cat-face-walk.gif', 320)]:
     frames[0].save(output / name, save_all=True, append_images=frames[1:],
                    duration=duration, loop=0, disposal=2, transparency=255, optimize=False)
-frame('EgyptCat3.jpg').save(output / 'egypt-cat-last.gif', transparency=255)
-for name in ['egypt-cat-new-walk.gif', 'egypt-cat-new-fast.gif', 'egypt-cat-last.gif']:
+for name in ['egypt-cat-face-walk.gif']:
     image = Image.open(output / name)
     print(name, image.size, image.n_frames, image.info.get('duration'))

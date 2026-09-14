@@ -78,7 +78,7 @@ const characters = [
   },
   {
     className: "floating-egypt-cat",
-    src: "/characters/egypt-cat-walk.gif",
+    src: "/characters/egypt-cat-face-walk.gif",
     width: 250,
     height: 830,
     displayWidth: 252,
@@ -305,15 +305,8 @@ export function FloatingCharacters({
   const reappearTimers = useRef<Map<string, number>>(new Map());
   const [characterScale, setCharacterScale] = useState(1);
   const [grapeBoosted, setGrapeBoosted] = useState(false);
-  const [egyptPhase, setEgyptPhase] = useState(0);
   const [egyptBoosted, setEgyptBoosted] = useState(false);
   const egyptBoostTimer = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (egyptBoosted) return;
-    const timer = window.setInterval(() => setEgyptPhase((phase) => (phase + 1) % 3), 5000);
-    return () => window.clearInterval(timer);
-  }, [egyptBoosted]);
 
   const boostEgyptCat = () => {
     setEgyptBoosted(true);
@@ -321,13 +314,13 @@ export function FloatingCharacters({
     egyptBoostTimer.current = window.setTimeout(() => {
       setEgyptBoosted(false);
       egyptBoostTimer.current = null;
-    }, 1000);
+    }, 2000);
   };
 
   useEffect(() => {
     const fastImage = new window.Image();
     fastImage.src = "/characters/grape-cat-walk-fast.gif";
-    for (const src of ["egypt-cat-new-walk.gif", "egypt-cat-new-fast.gif", "egypt-cat-last.gif"]) {
+    for (const src of ["egypt-cat-face-walk.gif", "egypt-cat-new-fast.gif"]) {
       const image = new window.Image();
       image.src = `/characters/${src}`;
     }
@@ -595,9 +588,7 @@ export function FloatingCharacters({
         const isGrapeCat = index === grapeCharacterIndex;
         const isEgyptCat = character.className === "floating-egypt-cat";
         const egyptSource = egyptBoosted ? "/characters/egypt-cat-new-fast.gif"
-          : egyptPhase === 1 ? "/characters/egypt-cat-new-walk.gif"
-          : egyptPhase === 2 ? "/characters/egypt-cat-last.gif"
-          : "/characters/egypt-cat-walk.gif";
+          : "/characters/egypt-cat-face-walk.gif";
         const vanishesWhenClicked = vanishOnClick && clickVanishCharacterIndexes.has(index);
         const isClickHidden = vanishesWhenClicked && hiddenCharacters.has(index);
         const style: CSSProperties | undefined = motion
