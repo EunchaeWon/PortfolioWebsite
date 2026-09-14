@@ -286,8 +286,6 @@ export function FloatingCharacters({
     characters.map(() => null),
   );
   const [grapeTrail, setGrapeTrail] = useState<TrailPoint[]>([]);
-  const [showPhotoCat, setShowPhotoCat] = useState(false);
-  const [photoCatRun, setPhotoCatRun] = useState(0);
   const [orangeSpot, setOrangeSpot] = useState<AmbientSpot>({
     x: 16,
     y: 76,
@@ -302,7 +300,6 @@ export function FloatingCharacters({
   const characterRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const lastGrapeTrailPoint = useRef<{ turnId: number; x: number; y: number } | null>(null);
   const grapeTrailPointId = useRef(0);
-  const photoCatTimer = useRef<number | null>(null);
   const grapeBoostTimer = useRef<number | null>(null);
   const reappearTimers = useRef<Map<string, number>>(new Map());
   const [characterScale, setCharacterScale] = useState(1);
@@ -515,28 +512,6 @@ export function FloatingCharacters({
     return () => window.clearInterval(timer);
   }, [characterScale, grapeMotion]);
 
-  useEffect(() => {
-    const revealPhotoCat = (event: MouseEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element) || !target.closest("button, a[href], summary")) return;
-      if (target.closest("[data-no-photo-cat], .project-cassette, .cassette-project-overlay")) return;
-
-      setPhotoCatRun((current) => current + 1);
-      setShowPhotoCat(true);
-      if (photoCatTimer.current !== null) window.clearTimeout(photoCatTimer.current);
-      photoCatTimer.current = window.setTimeout(
-        () => setShowPhotoCat(false),
-        1700,
-      );
-    };
-
-    document.addEventListener("click", revealPhotoCat);
-    return () => {
-      document.removeEventListener("click", revealPhotoCat);
-      if (photoCatTimer.current !== null) window.clearTimeout(photoCatTimer.current);
-    };
-  }, []);
-
   const handleTransitionEnd = (
     index: number,
     event: TransitionEvent<HTMLSpanElement>,
@@ -698,20 +673,6 @@ export function FloatingCharacters({
           height={980}
           sizes="148px"
           draggable={false}
-        />
-      </span>
-      <span
-        key={photoCatRun}
-        className={`static-rainbow-cat${showPhotoCat ? " is-visible" : ""}`}
-      >
-        <Image
-          src="/characters/click-face.jpg"
-          alt=""
-          width={169}
-          height={221}
-          sizes="(max-width: 680px) 58vw, 448px"
-          draggable={false}
-          priority
         />
       </span>
     </div>
