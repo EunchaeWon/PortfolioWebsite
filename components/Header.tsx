@@ -43,7 +43,7 @@ export function Header({ githubUrl, showWorldGuide = false, worldGuideUp = false
           <Link key={link.href} href={link.href} className={showWorldGuide && link.href === "/world" ? "project-guided-link" : undefined}>
             {link.label}
             {showWorldGuide && isAtTop && link.href === "/world" && (
-              <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
+              <span className={`monitor-click-cursor header-project-guide${worldGuideUp ? " is-pointing-up" : ""}`} aria-hidden="true">
                 <span>{worldGuideUp ? "↑" : "↗"}</span><small>Click</small>
               </span>
             )}

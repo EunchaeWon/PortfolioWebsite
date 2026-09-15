@@ -26,7 +26,7 @@ export default function ProjectsPage() {
       <NeonCatSprinkles behindProjectCards />
 
       <div className="top-navigation-track">
-        <Header githubUrl={githubUrl} showWorldGuide />
+        <Header githubUrl={githubUrl} showWorldGuide worldGuideUp />
       </div>
 
       <main>

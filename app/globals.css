@@ -615,6 +615,7 @@ button, summary { color: inherit; font: inherit; }
   animation: header-guide-point 1.45s ease-in-out infinite;
 }
 .header-project-guide > span { transform: none; }
+.monitor-click-cursor.header-project-guide.is-pointing-up { left: 40%; animation-name: header-guide-point-up; }
 .home-navigation-track .header-project-guide {
   scale: 0.75;
   transform-origin: top left;
