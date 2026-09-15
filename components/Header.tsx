@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 type HeaderProps = {
   githubUrl: string;
   showWorldGuide?: boolean;
+  worldGuideUp?: boolean;
 };
 
 const internalLinks = [
@@ -15,7 +16,7 @@ const internalLinks = [
   { label: "Contact", href: "/#contact" },
 ];
 
-export function Header({ githubUrl, showWorldGuide = false }: HeaderProps) {
+export function Header({ githubUrl, showWorldGuide = false, worldGuideUp = false }: HeaderProps) {
   const mobileMenuRef = useRef<HTMLDetailsElement>(null);
   const [isAtTop, setIsAtTop] = useState(false);
 
@@ -43,7 +44,7 @@ export function Header({ githubUrl, showWorldGuide = false }: HeaderProps) {
             {link.label}
             {showWorldGuide && isAtTop && link.href === "/world" && (
               <span className="monitor-click-cursor header-project-guide" aria-hidden="true">
-                <span>↗</span><small>Click</small>
+                <span>{worldGuideUp ? "↑" : "↗"}</span><small>Click</small>
               </span>
             )}
           </Link>

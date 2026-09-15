@@ -616,6 +616,10 @@ button, summary { color: inherit; font: inherit; }
 }
 .header-project-guide > span { transform: none; }
 .home-navigation-track .header-project-guide {
+  scale: 0.5;
+  transform-origin: top left;
+  left: 40%;
+  animation-name: header-guide-point-up;
   color: #999;
   filter: none;
   text-shadow: none;
@@ -642,6 +646,10 @@ button, summary { color: inherit; font: inherit; }
 }
 .home-scroll-guide > span { transform: none; color: #999; }
 .home-scroll-guide small { font-size: 0.75rem; color: #999; background: #111; text-shadow: none; box-shadow: none; }
+@keyframes header-guide-point-up {
+  0%, 100% { opacity: 0.72; transform: translate3d(0, 0, 0); }
+  50% { opacity: 1; transform: translate3d(0, -7px, 0); }
+}
 @keyframes header-guide-point {
   0%, 100% { opacity: 0.72; transform: translate3d(0, 0, 0); }
   50% { opacity: 1; transform: translate3d(7px, -7px, 0); }
