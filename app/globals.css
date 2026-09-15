@@ -616,7 +616,7 @@ button, summary { color: inherit; font: inherit; }
 }
 .header-project-guide > span { transform: none; }
 .home-navigation-track .header-project-guide {
-  scale: 0.5;
+  scale: 0.75;
   transform-origin: top left;
   left: 40%;
   animation-name: header-guide-point-up;
