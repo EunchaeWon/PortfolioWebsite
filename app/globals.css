@@ -615,6 +615,18 @@ button, summary { color: inherit; font: inherit; }
   animation: header-guide-point 1.45s ease-in-out infinite;
 }
 .header-project-guide > span { transform: none; }
+.home-navigation-track .header-project-guide {
+  color: #999;
+  filter: none;
+  text-shadow: none;
+}
+.home-navigation-track .header-project-guide small {
+  font-size: 0.75rem;
+  color: #999;
+  background: #111;
+  text-shadow: none;
+  box-shadow: none;
+}
 .monitor-click-cursor.home-scroll-guide {
   top: auto;
   bottom: 24px;

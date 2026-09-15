@@ -36,8 +36,8 @@ export default function Home() {
       <CatCursor />
       <TopToCassetteScroll />
       <AboutDecorations />
-      <div className="top-navigation-track">
-        <Header githubUrl={links.github} />
+      <div className="top-navigation-track home-navigation-track">
+        <Header githubUrl={links.github} showWorldGuide />
       </div>
 
       <main>
