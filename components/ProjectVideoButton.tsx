@@ -1,4 +1,5 @@
 "use client";
+import { lockBodyScroll } from "./bodyScrollLock";
 
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
@@ -90,8 +91,7 @@ export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOver
   useEffect(() => {
     if (!isOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlockScroll = lockBodyScroll();
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -101,7 +101,7 @@ export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOver
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
+      unlockScroll();
     };
   }, [closeVideo, isOpen]);
 

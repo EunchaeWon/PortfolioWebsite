@@ -1,4 +1,5 @@
 "use client";
+import { lockBodyScroll } from "./bodyScrollLock";
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -97,8 +98,7 @@ export function CassetteLibrary({ projects }: { projects: Project[] }) {
   useEffect(() => {
     if (!activeProject) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlockScroll = lockBodyScroll();
     closeButtonRef.current?.focus();
 
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -107,7 +107,7 @@ export function CassetteLibrary({ projects }: { projects: Project[] }) {
     window.addEventListener("keydown", closeOnEscape);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      unlockScroll();
       document.dispatchEvent(new Event("portfolio:cassette-close"));
       window.removeEventListener("keydown", closeOnEscape);
     };

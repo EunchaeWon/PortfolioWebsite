@@ -1,4 +1,5 @@
 "use client";
+import { lockBodyScroll } from "./bodyScrollLock";
 
 import Image from "next/image";
 import { createPortal } from "react-dom";
@@ -42,8 +43,7 @@ export function ProjectGallery({
   useEffect(() => {
     if (activeIndex === null) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlockScroll = lockBodyScroll();
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -55,7 +55,7 @@ export function ProjectGallery({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
+      unlockScroll();
     };
   }, [activeIndex, items.length]);
 
