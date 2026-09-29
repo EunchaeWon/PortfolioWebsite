@@ -231,7 +231,7 @@ export default function Home() {
       <footer>
         <span>© 2026 Eunchae Won</span>
         <span>Designed for play · Built with Next.js</span>
-        <a href="/nowhere-now-here/privacy/">Game privacy policy</a>
+        <a href="/nowhere-now-here/privacy.html">Game privacy policy</a>
         <a href="#top">Back to top ↑</a>
       </footer>
     </>
