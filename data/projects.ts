@@ -53,6 +53,7 @@ export type Project = {
   artworkUrl?: string;
   playableUrl?: string;
   releaseLabel?: string;
+  accessNote?: string;
   accent: ProjectAccent;
 };
 
@@ -61,6 +62,7 @@ const projectCatalog: Project[] = [
     slug: "nowhere-now-here",
     title: "Nowhere, Now Here",
     releaseLabel: "Early Access (Beta) · Available now on mobile & PC",
+    accessNote: "Early Access password: 0821",
     playableUrl: "https://eunchaewon.itch.io/nowhere-now-here",
     videoUrl: "https://youtu.be/6Mug-2A8FXI",
     shortDescription:

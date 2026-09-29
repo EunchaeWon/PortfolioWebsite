@@ -101,6 +101,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
         {project.releaseLabel && project.playableUrl && (
           <aside className="project-release" aria-label="Release status">
             <strong>{project.releaseLabel}</strong>
+            {project.accessNote && <span>{project.accessNote}</span>}
             <a href={project.playableUrl} target="_blank" rel="noreferrer">Download &amp; play the beta on itch.io ↗</a>
           </aside>
         )}
