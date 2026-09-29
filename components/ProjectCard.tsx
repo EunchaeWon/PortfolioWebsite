@@ -58,7 +58,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
             unoptimized
           />
           </>}
-          {videos[0] && <ProjectVideoButton title={project.title} videoUrl={videos[0].url} label={videos[0].label} imageOverlay />}
+          {videos[0] && <ProjectVideoButton title={project.title} videoUrl={videos[0].url} label={videos[0].label} autoPlay={project.slug === "nowhere-now-here"} imageOverlay />}
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
         {project.releaseLabel && project.playableUrl && (
           <aside className="project-release" aria-label="Release status">
             <strong>{project.releaseLabel}</strong>
-            <a href={project.playableUrl} target="_blank" rel="noreferrer">Play the beta on itch.io ↗</a>
+            <a href={project.playableUrl} target="_blank" rel="noreferrer">Download &amp; play the beta on itch.io ↗</a>
           </aside>
         )}
         <p className="project-description">{project.shortDescription}</p>
@@ -159,6 +159,7 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
                 title={project.title}
                 videoUrl={video.url}
                 label={video.label}
+                autoPlay={project.slug === "nowhere-now-here"}
               />
             ))}
           </div>

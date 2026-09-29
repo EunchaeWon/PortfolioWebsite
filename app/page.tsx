@@ -196,6 +196,9 @@ export default function Home() {
                 <a href={links.itch} target="_blank" rel="noreferrer">
                   <span>itch.io</span><strong>eunchaewon.itch.io</strong><i aria-hidden="true">↗</i>
                 </a>
+                <a href="https://eunchaewonarts.com/nowhere-now-here/privacy.html">
+                  <span>Privacy</span><strong>Privacy &amp; Data Policy</strong><i aria-hidden="true">↗</i>
+                </a>
               </div>
             </section>
           </Reveal>

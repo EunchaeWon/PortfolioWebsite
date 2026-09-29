@@ -9,6 +9,7 @@ type ProjectVideoButtonProps = {
   videoUrl: string;
   label?: string;
   imageOverlay?: boolean;
+  autoPlay?: boolean;
 };
 
 function parseTimeToSeconds(value: string | null) {
@@ -21,7 +22,7 @@ function parseTimeToSeconds(value: string | null) {
   return Number(match[1] ?? 0) * 3600 + Number(match[2] ?? 0) * 60 + Number(match[3] ?? 0);
 }
 
-function getYouTubeEmbedUrl(videoUrl: string) {
+function getYouTubeEmbedUrl(videoUrl: string, autoPlay: boolean) {
   try {
     const url = new URL(videoUrl);
     const host = url.hostname.replace(/^www\./, "");
@@ -42,7 +43,7 @@ function getYouTubeEmbedUrl(videoUrl: string) {
     if (!/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return null;
 
     const start = parseTimeToSeconds(url.searchParams.get("start") ?? url.searchParams.get("t"));
-    const params = new URLSearchParams({ autoplay: "0", controls: "1", playsinline: "1", rel: "0", enablejsapi: "1" });
+    const params = new URLSearchParams({ autoplay: autoPlay ? "1" : "0", controls: "1", playsinline: "1", rel: "0", enablejsapi: "1" });
     if (start > 0) params.set("start", String(start));
 
     return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
@@ -51,7 +52,7 @@ function getYouTubeEmbedUrl(videoUrl: string) {
   }
 }
 
-export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOverlay = false }: ProjectVideoButtonProps) {
+export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOverlay = false, autoPlay = false }: ProjectVideoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [playerRevision, setPlayerRevision] = useState(0);
   const [playerStatus, setPlayerStatus] = useState("Loading YouTube player…");
@@ -59,7 +60,7 @@ export function ProjectVideoButton({ title, videoUrl, label = "Watch", imageOver
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
-  const embedUrl = getYouTubeEmbedUrl(videoUrl);
+  const embedUrl = getYouTubeEmbedUrl(videoUrl, autoPlay);
 
   useEffect(() => {
     if (!isOpen) return;

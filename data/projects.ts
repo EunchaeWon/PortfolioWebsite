@@ -62,14 +62,15 @@ const projectCatalog: Project[] = [
     title: "Nowhere, Now Here",
     releaseLabel: "Early Access (Beta) · Available now on mobile & PC",
     playableUrl: "https://eunchaewon.itch.io/nowhere-now-here",
+    videoUrl: "https://youtu.be/6Mug-2A8FXI",
     shortDescription:
       "An atmospheric cat game about small needs, quiet rooms, and the uncanny feeling that someone is about to arrive.",
     overview: [
       "Built in Unreal Engine 5, the work turns a cat's ordinary needs—waking, eating, exploring, and searching for an exit—into a sequence of small narrative interactions. The domestic setting gradually shifts from familiar to uncanny as the player follows those needs.",
       "The project is developed through an end-to-end original 3D pipeline: ZBrush sculpting and optimization, Substance 3D Painter textures, MetaHuman costume fitting, modular room assets, and gameplay logic authored in C++ and Blueprints.",
     ],
-    thumbnail: "/projects/nowhere-thumb.webp",
-    thumbnailAlt: "A black cat waking on a sofa in a hazy, softly lit room",
+    thumbnail: "/projects/gallery/nowhere-beta-menu.png",
+    thumbnailAlt: "Nowhere, Now Here main menu with an orange cat beside a candle",
     gameplayMedia: "/projects/nowhere-gameplay.webp",
     gameplayAlt: "A black cat standing near a plate in a brick-lined interior",
     developmentPeriod: "Early Access (Beta) · In active development",
