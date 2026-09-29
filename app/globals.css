@@ -2305,6 +2305,38 @@ footer {
 }
 .projects-footer { position: relative; z-index: 2; }
 
+.game-privacy-page {
+  min-height: 100svh;
+  padding: clamp(2rem, 7vw, 5rem) 1.25rem;
+  background: #070916;
+  color: #dffcff;
+}
+.game-privacy-document {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.game-privacy-document h1 {
+  margin: 0 0 0.25rem;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  line-height: 1.1;
+}
+.game-privacy-document h2 {
+  margin: 2.5rem 0 0.5rem;
+  color: #39ffde;
+  font-size: 1.35rem;
+}
+.game-privacy-document p { margin: 0 0 1rem; }
+.game-privacy-document a { color: #39ffde; text-decoration: underline; text-underline-offset: 0.2em; }
+.game-privacy-document a:focus-visible { outline: 2px solid #ff3cac; outline-offset: 3px; }
+.game-privacy-back, .game-privacy-kicker, .game-privacy-date {
+  font-family: "Courier New", monospace;
+}
+.game-privacy-document .game-privacy-back { display: inline-block; margin-bottom: 2.5rem; }
+.game-privacy-kicker { color: #ff3cac; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.08em; }
+.game-privacy-document .game-privacy-date { margin-bottom: 2.5rem; color: #8faabd; font-size: 0.875rem; }
+
 .world-page {
   position: relative;
   width: 100%;
