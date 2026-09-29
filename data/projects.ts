@@ -64,7 +64,7 @@ const projectCatalog: Project[] = [
     releaseLabel: "Early Access (Beta) · Available now on mobile & PC",
     accessNote: "Early Access password: 0821",
     playableUrl: "https://eunchaewon.itch.io/nowhere-now-here",
-    videoUrl: "https://youtu.be/6Mug-2A8FXI",
+    videoUrl: "https://youtu.be/5C9cZQTGOJE",
     shortDescription:
       "An atmospheric cat game about small needs, quiet rooms, and the uncanny feeling that someone is about to arrive.",
     overview: [
