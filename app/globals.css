@@ -3067,3 +3067,15 @@ body:has(.hero) .floating-character-world { opacity: 0.92; }
   .neon-cat-sprinkle { animation: none !important; }
   .neon-paw-sticker { animation: none !important; }
 }
+.project-release {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid #8fe9df;
+  background: #102c30;
+  color: #e2fff8;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.project-release a { color: #baffdf; text-decoration: underline; text-underline-offset: 3px; }

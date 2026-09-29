@@ -98,6 +98,12 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
         </div>
 
         <h3 id={`${projectId}-title`}>{project.title}</h3>
+        {project.releaseLabel && project.playableUrl && (
+          <aside className="project-release" aria-label="Release status">
+            <strong>{project.releaseLabel}</strong>
+            <a href={project.playableUrl} target="_blank" rel="noreferrer">Play the beta on itch.io ↗</a>
+          </aside>
+        )}
         <p className="project-description">{project.shortDescription}</p>
 
         <div className="project-overview">

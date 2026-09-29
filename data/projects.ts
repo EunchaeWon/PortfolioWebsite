@@ -52,6 +52,7 @@ export type Project = {
   videos?: ProjectVideo[];
   artworkUrl?: string;
   playableUrl?: string;
+  releaseLabel?: string;
   accent: ProjectAccent;
 };
 
@@ -59,6 +60,8 @@ const projectCatalog: Project[] = [
   {
     slug: "nowhere-now-here",
     title: "Nowhere, Now Here",
+    releaseLabel: "Early Access (Beta) · Available now on mobile & PC",
+    playableUrl: "https://eunchaewon.itch.io/nowhere-now-here",
     shortDescription:
       "An atmospheric cat game about small needs, quiet rooms, and the uncanny feeling that someone is about to arrive.",
     overview: [
@@ -69,7 +72,7 @@ const projectCatalog: Project[] = [
     thumbnailAlt: "A black cat waking on a sofa in a hazy, softly lit room",
     gameplayMedia: "/projects/nowhere-gameplay.webp",
     gameplayAlt: "A black cat standing near a plate in a brick-lined interior",
-    developmentPeriod: "Ongoing",
+    developmentPeriod: "Early Access (Beta) · In active development",
     engine: "Unreal Engine 5",
     technologies: [
       "Unreal Engine 5",
@@ -90,9 +93,19 @@ const projectCatalog: Project[] = [
       challenge: "Turn a cat's ordinary needs into a readable gameplay loop while letting a familiar home gradually become uncanny.",
       whatIBuilt: "A cat-led exploration game with original characters, costumes, modular rooms, environmental interactions, and a developing narrative progression.",
       technicalImplementation: "Unreal Engine 5 gameplay systems in C++ and Blueprints, supported by Blender and ZBrush modeling, Substance 3D Painter textures, MetaHuman costume fitting, and performance-aware asset preparation.",
-      result: "An evolving playable prototype that demonstrates an end-to-end real-time production pipeline and a distinct atmospheric world.",
+      result: "Released in Early Access (Beta) for mobile and PC on itch.io. The game remains in active development, bringing its original characters, gameplay systems, and atmospheric world into a publicly playable experience.",
     },
     gallery: [
+      {
+        src: "/projects/gallery/nowhere-beta-menu.png",
+        alt: "Nowhere, Now Here beta main menu with an orange cat beside a candle",
+        caption: "Early Access (Beta) — main menu",
+      },
+      {
+        src: "/projects/gallery/nowhere-beta-spider.jpg",
+        alt: "A black cat encountering the Spider Monster through a doorway",
+        caption: "Early Access (Beta) — Spider Monster encounter",
+      },
       {
         src: "/projects/gallery/nowhere-cat-candle.webp",
         alt: "A cat character standing beside a lit candle in a dark room",
