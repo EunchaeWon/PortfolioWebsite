@@ -98,11 +98,6 @@ const projectCatalog: Project[] = [
     },
     gallery: [
       {
-        src: "/projects/gallery/nowhere-beta-menu.png",
-        alt: "Nowhere, Now Here beta main menu with an orange cat beside a candle",
-        caption: "Early Access (Beta) — main menu",
-      },
-      {
         src: "/projects/gallery/nowhere-beta-spider.jpg",
         alt: "A black cat encountering the Spider Monster through a doorway",
         caption: "Early Access (Beta) — Spider Monster encounter",
