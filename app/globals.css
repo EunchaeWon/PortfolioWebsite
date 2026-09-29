@@ -3111,4 +3111,8 @@ body:has(.hero) .floating-character-world { opacity: 0.92; }
   line-height: 1.5;
 }
 .project-release a { color: #baffdf; text-decoration: underline; text-underline-offset: 3px; }
-.project-release .project-access-note { color: #ff7474; font-weight: 700; }
+.project-release .project-access-note {
+  color: #ff4868;
+  font-weight: 700;
+  text-shadow: 0 0 4px #ff204a, 0 0 10px rgba(255, 32, 74, 0.65);
+}
