@@ -25,7 +25,7 @@ const SPIDER_PAW_ROUTE = [
 ];
 
 type SpiderMode = "walk" | "twitch";
-type WorldLayer = "facewall" | "spiderMonsterSmall" | "spiderMonsterLarge" | "catPaw" | "odette";
+type WorldLayer = "facewall" | "spiderMonsterSmall" | "spiderMonsterLarge" | "catPaw" | "odette" | "runningCat";
 type WorldLayers = Record<WorldLayer, boolean>;
 
 // Retained only as an import recipe for a later deliberate re-add; it is not
@@ -536,6 +536,49 @@ function Odette({ visible }: { visible: boolean }) {
   );
 }
 
+function RunningCat({ visible }: { visible: boolean }) {
+  const { scene, animations } = useGLTF("/world/running-cat.glb");
+  const model = useMemo(() => {
+    const copy = cloneSkeleton(scene);
+    copy.traverse(object => { if (object instanceof Mesh) object.frustumCulled = false; });
+    return copy;
+  }, [scene]);
+  const root = useRef<Group>(null);
+  const fit = useRef<Group>(null);
+  const route = useRef<Group>(null);
+  const elapsed = useRef(0);
+  const frames = useRef(0);
+  const { actions } = useAnimations(animations, root);
+  useEffect(() => {
+    const action = actions.Run;
+    if (!action) return;
+    action.reset().setLoop(LoopRepeat, Infinity).play();
+    return () => { action.stop(); };
+  }, [actions]);
+  useEffect(() => { if (actions.Run) actions.Run.paused = !visible; }, [actions, visible]);
+  useFrame((_, delta) => {
+    if (!visible || !root.current || !fit.current || !route.current) return;
+    if (frames.current < 3) {
+      if (++frames.current < 3) return;
+      root.current.updateWorldMatrix(true, true);
+      const bounds = posedMeshBounds(root.current);
+      const height = bounds.getSize(new Vector3()).y;
+      if (height <= 0) { frames.current = 0; return; }
+      const center = bounds.getCenter(new Vector3());
+      root.current.position.set(-center.x, -bounds.min.y, -center.z);
+      fit.current.scale.setScalar(0.22 / height);
+      route.current.userData.ready = true;
+    }
+    elapsed.current += Math.min(delta, 0.05);
+    const angle = elapsed.current * 0.65;
+    route.current.position.set(0.7 + Math.cos(angle) * 0.55, -2.38, 2.37 + Math.sin(angle) * 0.55);
+    route.current.rotation.y = -angle;
+  });
+  return <group visible={visible} name="RunningCat"><group ref={route} name="CatRoute">
+    <group ref={fit}><group ref={root}><primitive object={model} /></group></group>
+  </group></group>;
+}
+
 function LoadingWorld() {
   return (
     <Html center>
@@ -547,10 +590,24 @@ function LoadingWorld() {
 function WorldCamera({ request }: { request: { pov: number; version: number } }) {
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const applied = useRef(-1);
-  useFrame(({ camera }) => {
+  const lastCatPosition = useRef<Vector3 | null>(null);
+  useFrame(({ camera, scene }) => {
+    const cat = scene.getObjectByName("CatRoute");
+    if (request.pov === 6 && cat?.userData.ready && controls.current && applied.current === request.version) {
+      const position = cat.getWorldPosition(new Vector3());
+      if (lastCatPosition.current) {
+        const movement = position.clone().sub(lastCatPosition.current);
+        camera.position.add(movement);
+        controls.current.target.add(movement);
+        controls.current.update();
+      }
+      lastCatPosition.current = position;
+    }
     if (!controls.current || applied.current === request.version || !(camera instanceof PerspectiveCamera)) return;
     const orbit = controls.current;
-    camera.near = request.pov === 5 ? 0.0001 : 0.001;
+    if (request.pov === 6 && !cat?.userData.ready) return;
+    lastCatPosition.current = null;
+    camera.near = request.pov >= 5 ? 0.0001 : 0.001;
     if (request.pov === 1) {
       camera.position.set(-0.09450368318859186, -1.0076274064877306, -0.01692057046542648);
       orbit.target.set(-0.09450379257416601, -0.01459693722918709, -0.01691958298995035);
@@ -579,6 +636,17 @@ function WorldCamera({ request }: { request: { pov: number; version: number } })
       orbit.target.set(0.46871659829601964, -2.7732716013880214, 0.050006316843287824);
       camera.zoom = 1;
       camera.updateProjectionMatrix();
+    } else if (request.pov === 6 && cat) {
+      const bounds = posedMeshBounds(cat);
+      const center = bounds.getCenter(new Vector3());
+      const radius = bounds.getSize(new Vector3()).length() * 0.5;
+      const halfFov = Math.atan(Math.tan(camera.fov * Math.PI / 360) * Math.min(camera.aspect, 1));
+      const distance = radius / Math.sin(halfFov) * 1.35;
+      orbit.target.copy(center);
+      camera.position.copy(center).add(new Vector3(1, 0.5, 1).normalize().multiplyScalar(distance));
+      camera.zoom = 1;
+      camera.updateProjectionMatrix();
+      lastCatPosition.current = cat.getWorldPosition(new Vector3());
     }
     // Clear accumulated damping before applying an exact preset.
     const damping = orbit.enableDamping;
@@ -607,6 +675,7 @@ export function WorldViewer() {
     spiderMonsterLarge: true,
     catPaw: true,
     odette: true,
+    runningCat: true,
   });
   const dismissGuide = () => setHasInteracted(true);
   const toggleLayer = (layer: WorldLayer) => {
@@ -618,6 +687,7 @@ export function WorldViewer() {
     { id: "spiderMonsterLarge", label: "Spider Monster 2" },
     { id: "catPaw", label: "Cat Paw" },
     { id: "odette", label: "Odette" },
+    { id: "runningCat", label: "Running Cat" },
   ];
 
   return (
@@ -647,6 +717,9 @@ export function WorldViewer() {
         <Suspense fallback={null}>
           <Odette visible={layers.odette} />
         </Suspense>
+        <Suspense fallback={null}>
+          <RunningCat visible={layers.runningCat} />
+        </Suspense>
         <WorldCamera request={viewRequest} />
       </Canvas>
       <span className="world-scanlines" aria-hidden="true" />
@@ -675,10 +748,11 @@ export function WorldViewer() {
             onClick={() => setViewpointsOpen(open => !open)}>
             <span aria-hidden="true">{viewpointsOpen ? "−" : "+"}</span> VIEWPOINTS
           </button>
-          {viewpointsOpen && [[1, "Initial view"], [2, "Spider Monster"], [3, "Front / All meshes"], [4, "My Favorite"], [5, "Odette"]].map(([pov, label]) => (
+          {viewpointsOpen && [[1, "Initial view"], [2, "Spider Monster"], [3, "Front / All meshes"], [4, "My Favorite"], [5, "Odette"], [6, "Cat"]].map(([pov, label]) => (
             <button key={pov} type="button" aria-pressed={viewRequest.pov === pov}
               onClick={() => {
                 if (pov === 2) setLayers(current => ({ ...current, spiderMonsterSmall: true }));
+                if (pov === 6) setLayers(current => ({ ...current, runningCat: true }));
                 setViewRequest(current => ({ pov: Number(pov), version: current.version + 1 }));
               }}>
               <strong>POV {pov}.</strong><span>{label}</span>
