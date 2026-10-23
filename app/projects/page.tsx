@@ -8,6 +8,7 @@ import { Header } from "@/components/Header";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Reveal } from "@/components/Reveal";
 import { SelectedStudies } from "@/components/SelectedStudies";
+import { SamsaraProject } from "@/components/SamsaraProject";
 import { projects } from "@/data/projects";
 
 const githubUrl = "https://github.com/EunchaeWon";
@@ -52,6 +53,7 @@ export default function ProjectsPage() {
             ))}
           </div>
           <SelectedStudies />
+          <SamsaraProject />
         </section>
       </main>
 
