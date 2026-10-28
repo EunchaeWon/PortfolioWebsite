@@ -1,0 +1,68 @@
+.models {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(124, 151, 211, 0.28);
+}
+
+.heading {
+  margin: 0 0 0.65rem;
+  color: #a9c8ee;
+  font: 700 0.7rem "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.model {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+}
+
+.details {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  color: #b0bed5;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.details strong {
+  color: #d4e0f0;
+  font-size: 0.85rem;
+}
+
+.details small {
+  color: #9dacc6;
+  font-size: 0.68rem;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 44px;
+  color: #a9c8ee;
+  font: 700 0.72rem "Courier New", monospace;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.link:hover {
+  color: #e0ebff;
+}
+
+.link:focus-visible {
+  outline: 2px solid #a9c8ee;
+  outline-offset: 4px;
+}

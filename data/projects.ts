@@ -28,6 +28,13 @@ export type ProjectVideo = {
   url: string;
 };
 
+export type ProjectModel = {
+  name: string;
+  url: string;
+  contribution: string;
+  triangles: number;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -50,6 +57,7 @@ export type Project = {
   itchUrl?: string;
   videoUrl?: string;
   videos?: ProjectVideo[];
+  models?: ProjectModel[];
   artworkUrl?: string;
   playableUrl?: string;
   releaseLabel?: string;
@@ -65,6 +73,20 @@ const projectCatalog: Project[] = [
     accessNote: "Early Access password: 0821",
     playableUrl: "https://eunchaewon.itch.io/nowhere-now-here",
     videoUrl: "https://youtu.be/5C9cZQTGOJE",
+    models: [
+      {
+        name: "Cat",
+        url: "https://sketchfab.com/3d-models/cat-d9c15ac87a604714b355a9596cdbb151",
+        contribution: "Character modeling & texturing",
+        triangles: 15632,
+      },
+      {
+        name: "Spiderwoman",
+        url: "https://sketchfab.com/3d-models/spiderwoman-low-low-3098364dc46349eb907ad64f54594b4b",
+        contribution: "Creature modeling",
+        triangles: 68666,
+      },
+    ],
     shortDescription:
       "An atmospheric cat game about small needs, quiet rooms, and the uncanny feeling that someone is about to arrive.",
     overview: [
@@ -130,6 +152,14 @@ const projectCatalog: Project[] = [
   {
     slug: "swan-in-lake",
     title: "Swan in Lake",
+    models: [
+      {
+        name: "Nymph / Odette",
+        url: "https://sketchfab.com/3d-models/nymph-lowpoly-6f9108789d584eaeb9bdd8f2eaa1c2d2",
+        contribution: "Character & costume modeling",
+        triangles: 583222,
+      },
+    ],
     shortDescription:
       "A chain-of-choices game where Odette gathers memories and decides whether to leave the lake.",
     overview: [

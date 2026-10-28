@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ProjectGallery } from "@/components/ProjectGallery";
+import { ProjectModels } from "@/components/ProjectModels";
 import { ProjectVideoButton } from "@/components/ProjectVideoButton";
 import type { Project } from "@/data/projects";
 
@@ -167,6 +168,8 @@ export function ProjectCard({ project, index, idPrefix = "", interactiveGallery 
         ) : (
           <p className="project-private">Private build · Documentation available on request</p>
         )}
+
+        {project.models && <ProjectModels models={project.models} projectTitle={project.title} />}
       </div>
 
       {project.gallery.length > 0 && <ProjectGallery
